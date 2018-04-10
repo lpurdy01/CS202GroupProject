@@ -9,7 +9,7 @@ int main ()
     shape.setFillColor(sf::Color::Yellow);
 
     sf::Texture texture;
-    system("dir"); //Place Game Resources in this path.
+    //system("dir"); //Place Game Resources in this path.
     if (!texture.loadFromFile("Drawing.png")) {
         return EXIT_FAILURE;
     }
@@ -53,4 +53,6 @@ int main ()
     }
 
     return 0;
+    cout << "Press ENTER to quit ";
+	while (cin.get() != '\n');
 }
