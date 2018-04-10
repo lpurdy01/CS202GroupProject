@@ -1,9 +1,6 @@
 #include <SFML/Graphics.hpp>
-<<<<<<< HEAD
 #include "ResourcePath.hpp"
 #include "Network.hpp"
-=======
->>>>>>> d0cc74b2a92dcc3a0f70876b7552361eda140d38
 
 int main ()
 {
@@ -12,10 +9,7 @@ int main ()
     shape.setFillColor(sf::Color::Yellow);
 
     sf::Texture texture;
-<<<<<<< HEAD
     system("dir"); //Place Game Resources in this path.
-=======
->>>>>>> d0cc74b2a92dcc3a0f70876b7552361eda140d38
     if (!texture.loadFromFile("Drawing.png")) {
         return EXIT_FAILURE;
     }
