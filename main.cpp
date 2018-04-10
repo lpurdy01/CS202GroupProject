@@ -1,6 +1,7 @@
 //This is Liam adding a comment and committing
 #include <SFML/Graphics.hpp>
 #include "ResourcePath.hpp"
+#include "Network.hpp"
 
 int main ()
 {
@@ -9,7 +10,7 @@ int main ()
     shape.setFillColor(sf::Color::Yellow);
 
     sf::Texture texture;
-    system("dir");
+    system("dir"); //Place Game Resources in this path.
     if (!texture.loadFromFile("Drawing.png")) {
         return EXIT_FAILURE;
     }
