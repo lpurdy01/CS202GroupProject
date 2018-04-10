@@ -51,7 +51,10 @@ int main ()
         window.display();
     }
 
-    return 0;
     cout << "Press ENTER to quit ";
 	while (cin.get() != '\n');
+
+    return 0;
+
+
 }
