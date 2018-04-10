@@ -3,9 +3,7 @@
 //     -Can be seperated to multiple hpp's / cpp's if we need to later
 
 
-#ifndef GameBase_hpp
-#define GameBase_hpp
+#ifndef GAMEBASE_HPP_INCLUDED
+#define GAMEBASE_HPP_INCLUDED
 
-#include <stdio.h>
-
-#endif /* GameBase_hpp */
+#endif /* GAMEBASE_HPP_INCLUDED */
