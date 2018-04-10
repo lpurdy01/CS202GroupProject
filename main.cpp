@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include "GameBase.hpp"
 #include "Network.hpp"
 
 int main ()
