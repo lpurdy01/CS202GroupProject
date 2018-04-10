@@ -7,28 +7,29 @@ int main ()
     sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML works!");
     sf::CircleShape shape(50);
     shape.setFillColor(sf::Color::Yellow);
-    
+
     sf::Texture texture;
-    if (!texture.loadFromFile(resourcePath() + "Drawing.png")) {
+    system("dir");
+    if (!texture.loadFromFile("Drawing.png")) {
         return EXIT_FAILURE;
     }
     sf::Sprite guy(texture);
     guy.setScale(.25, .25);
-    
+
     sf::Texture background;
-    if (!background.loadFromFile(resourcePath() + "cute_image.jpg")) {
+    if (!background.loadFromFile("cute_image.jpg")) {
         return EXIT_FAILURE;
     }
     sf::Sprite background1(background);
     background1.setScale(1.5,1.5);
-    
+
     while (window.isOpen())
     {
         window.clear();
         window.draw(background1);
         window.draw(shape);
         window.draw(guy);
-        
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -50,6 +51,6 @@ int main ()
         }
         window.display();
     }
-    
+
     return 0;
 }
