@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include "ResourcePath.hpp"
 #include "Network.hpp"
 
 int main ()
