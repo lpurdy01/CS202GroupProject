@@ -1,6 +1,4 @@
-//This is Liam adding a comment and committing
 #include <SFML/Graphics.hpp>
-#include "ResourcePath.hpp"
 
 int main ()
 {
@@ -9,7 +7,6 @@ int main ()
     shape.setFillColor(sf::Color::Yellow);
 
     sf::Texture texture;
-    system("dir");
     if (!texture.loadFromFile("Drawing.png")) {
         return EXIT_FAILURE;
     }
