@@ -44,4 +44,11 @@ private:
     sf::Texture _texture;
 };
 
+// -------------------------Block Class------------------------------
+class Block : public Entity, public sf::Shape
+{
+public:
+private:
+};
+
 #endif /* GAMEBASE_HPP_INCLUDED */

@@ -5,7 +5,9 @@
 #include "Network.hpp"
 
 void runOfflineGame () {
-    sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML works!");
+    int windowHeight = 600;
+    int windowWidth = 800;
+    sf::RenderWindow window(sf::VideoMode(2*windowWidth, 2*windowHeight), "SFML works!");
     //sf::CircleShape shape(50);
     //shape.setFillColor(sf::Color::Yellow);
     
@@ -16,6 +18,7 @@ void runOfflineGame () {
     guy.setScale(.25, .25);
     
     Background bg("cute_image.jpg");
+    bg.setScale(2,2);
     
     while (window.isOpen())
     {
@@ -51,55 +54,6 @@ void runOfflineGame () {
     }
     return 0;
 }
-
-void runClientGame () {
-    sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML works!");
-    //sf::CircleShape shape(50);
-    //shape.setFillColor(sf::Color::Yellow);
-    
-    //system("dir"); //Place Game Resources in this path
-    
-    
-    Character guy("Drawing.png");
-    guy.setScale(.25, .25);
-    
-    Background bg("cute_image.jpg");
-    
-    while (window.isOpen())
-    {
-        window.clear();
-        window.draw(bg);
-        window.draw(guy);
-        
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            int moveValue = 25;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            {
-                guy.move(-moveValue,0);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            {
-                guy.move(moveValue,0);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            {
-                guy.move(0,-moveValue);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            {
-                guy.move(0,moveValue);
-            }
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-        
-        window.display();
-    }
-    return 0;
-}
-
 
 int main ()
 {
@@ -140,11 +94,11 @@ int main ()
         string ip = getLine("Please enter ip of server"); //Make sure to add check for valid IP
         NetworkClient client;
         if(client.connect(ip)){
-            runClientGame();
+            runOfflineGame();
         }
         return 0;
     }
-    else if(consoleType == type::Offline)
+    else if(consoleType == type::Offline) //******************Offline*************
     {
         runOfflineGame();
     }
