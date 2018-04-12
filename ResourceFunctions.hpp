@@ -1,6 +1,10 @@
 //Levi Purdy
 //4/10/2018
 
+#ifndef RESOURCES_HPP_INCLUDED
+#define RESOURCES_HPP_INCLUDED
+
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -57,3 +61,6 @@ string getLine(string prompt) {
 		else return line;
 	}
 }
+
+
+#endif // RESOURCES_HPP_INCLUDED

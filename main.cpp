@@ -1,15 +1,49 @@
 #include <SFML/Graphics.hpp>
 #include "GameBase.hpp"
 #include "Network.hpp"
+#include "ResourceFunctions.hpp"
+#include "Network.hpp"
+
+
 
 int main ()
 {
+    enum class type {Client , Server};
+    type consoleType;
+    while(true){
+    int t = getInt("Welcome to our Game, are you a server (1) or client (2) or offline (3)?");
+    if(t == 1){
+        consoleType = type::Server;
+        break;
+    }
+
+    else if (t == 2) {
+        consoleType = type::Client;
+        break;
+    }
+    else {
+        std::cout << "Please try again" << std::endl;
+    }
+    }
+    if(consoleType == type::Server){
+        std::cout << "Entering Server Mode" << std::endl;
+        NetworkServer server;
+        server.prepare();
+    }
+    else if(consoleType == type::Client)
+    {
+        string ip = getLine("Please enter ip of server");
+        NetworkClient client;
+        client.connect(ip);
+    }
+
+
     sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML works!");
     sf::CircleShape shape(50);
     shape.setFillColor(sf::Color::Yellow);
 
     //system("dir"); //Place Game Resources in this path.
-    
+
     sf::Texture texture;
     if (!texture.loadFromFile("Drawing.png")) {
         return EXIT_FAILURE;
