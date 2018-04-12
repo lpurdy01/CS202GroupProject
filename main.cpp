@@ -42,15 +42,10 @@ int main ()
     sf::CircleShape shape(50);
     shape.setFillColor(sf::Color::Yellow);
 
-    //system("dir"); //Place Game Resources in this path.
-<<<<<<< HEAD
+    //system("dir"); //Place Game Resources in this path
 
-    Character guy(0,0,"Drawing.png");
-=======
-    
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
->>>>>>> 978dd960ab8a4062d8c80a4ba830d85ad2d6f14d
 
     Background bg("cute_image.jpg");
 
