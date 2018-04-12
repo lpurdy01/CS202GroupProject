@@ -8,7 +8,7 @@
 
 int main ()
 {
-    enum class type {Client , Server};
+    enum class type {Client , Server, Offline};
     type consoleType;
     while(true){
     int t = getInt("Welcome to our Game, are you a server (1) or client (2) or offline (3)?");
@@ -19,6 +19,10 @@ int main ()
 
     else if (t == 2) {
         consoleType = type::Client;
+        break;
+    }
+    else if(t == 3) {
+        consoleType = type::Offline;
         break;
     }
     else {
@@ -36,6 +40,10 @@ int main ()
         NetworkClient client;
         client.connect(ip);
     }
+    else if(consoleType == type::Offline){
+        std::cout << "Entering Offline Mode" << std::endl;
+    }
+
 
 
     sf::RenderWindow window(sf::VideoMode(1000, 1000), "SFML works!");
