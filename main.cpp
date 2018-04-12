@@ -52,15 +52,5 @@ int main ()
         }
         window.display();
     }
-
-<<<<<<< HEAD
     return 0;
-=======
-    cout << "Press ENTER to quit ";
-	while (cin.get() != '\n');
-
-    return 0;
-
-
->>>>>>> 32d4ade27e1ee45b5dc60deaa9bd2df05a0ae645
 }
