@@ -10,27 +10,15 @@ int main ()
 
     //system("dir"); //Place Game Resources in this path.
     
-    /*
-    sf::Texture texture;
-    if (!texture.loadFromFile("Drawing.png")) {
-        return EXIT_FAILURE;
-    }
-    sf::Sprite guy(texture);
+    Character guy("Drawing.png");
     guy.setScale(.25, .25);
-     */
-    Character guy(0,0,"Drawing.png");
 
-    sf::Texture background;
-    if (!background.loadFromFile("cute_image.jpg")) {
-        return EXIT_FAILURE;
-    }
-    sf::Sprite background1(background);
-    background1.setScale(1.5,1.5);
+    Background bg("cute_image.jpg");
 
     while (window.isOpen())
     {
         window.clear();
-        window.draw(background1);
+        window.draw(bg);
         window.draw(shape);
         window.draw(guy);
 

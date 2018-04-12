@@ -8,6 +8,7 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 
+// ----------------------Entity Class------------------------------
 class Entity
 {
 public:
@@ -22,11 +23,23 @@ private:
     int _yCoor;
 };
 
+// ----------------------Character Class----------------------------
 class Character : public Entity, public sf::Sprite
 {
 public:
-    Character (const int x = 0, const int y = 0, const std::string filepath = "");
+    Character (const std::string filepath);
+    Character (const int x, const int y, const std::string filepath);
     ~Character();
+private:
+    sf::Texture _texture;
+};
+
+// ----------------------Background Class---------------------------
+class Background : public Entity, public sf::Sprite
+{
+public:
+    Background (const std::string filepath);
+    ~Background();
 private:
     sf::Texture _texture;
 };
