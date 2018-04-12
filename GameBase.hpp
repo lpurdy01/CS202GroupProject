@@ -22,14 +22,13 @@ private:
     int _yCoor;
 };
 
-class Character : public Entity
+class Character : public Entity, public sf::Sprite
 {
 public:
-    Character (const int x = 0, const int y = 0);
+    Character (const int x = 0, const int y = 0, const std::string filepath = "");
     ~Character();
 private:
+    sf::Texture _texture;
 };
-
-void makeChar(sf::Sprite &variableName, const int xpos, const int ypos, std::string filepath);
 
 #endif /* GAMEBASE_HPP_INCLUDED */
