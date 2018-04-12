@@ -43,20 +43,21 @@ int main ()
     shape.setFillColor(sf::Color::Yellow);
 
     //system("dir"); //Place Game Resources in this path.
+<<<<<<< HEAD
 
     Character guy(0,0,"Drawing.png");
+=======
+    
+    Character guy("Drawing.png");
+    guy.setScale(.25, .25);
+>>>>>>> 978dd960ab8a4062d8c80a4ba830d85ad2d6f14d
 
-    sf::Texture background;
-    if (!background.loadFromFile("cute_image.jpg")) {
-        return EXIT_FAILURE;
-    }
-    sf::Sprite background1(background);
-    background1.setScale(1.5,1.5);
+    Background bg("cute_image.jpg");
 
     while (window.isOpen())
     {
         window.clear();
-        window.draw(background1);
+        window.draw(bg);
         window.draw(shape);
         window.draw(guy);
 

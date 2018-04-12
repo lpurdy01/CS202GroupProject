@@ -15,7 +15,14 @@ void Entity::deleteEntity() { numEntities--; }
 
 // --------------------Character Functions---------------------------
 
-//Character::Character (const int x, const int y) : Entity::Entity(x,y) { addEntity(); }
+Character::Character (std::string filepath)
+{
+    addEntity();
+    if (!_texture.loadFromFile(filepath)) {
+        return EXIT_FAILURE;
+    }
+    this->setTexture(_texture);
+}
 
 Character::Character (const int x, const int y, const std::string filepath)
     : Entity::Entity(x,y)
@@ -27,3 +34,13 @@ Character::Character (const int x, const int y, const std::string filepath)
 }
 
 Character::~Character() { deleteEntity(); }
+
+// --------------------Background Functions---------------------------
+Background::Background (const std::string filepath) {
+    if (!_texture.loadFromFile(filepath)) {
+        return EXIT_FAILURE;
+    }
+    this->setTexture(_texture);
+}
+
+Background::~Background() { deleteEntity(); }
