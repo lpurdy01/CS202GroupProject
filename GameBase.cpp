@@ -91,7 +91,6 @@ void Character::updateChar() {
     this->transpose(getxVel()*timeInc,getyVel()*timeInc);
     
     time = Clock::clock.restart();
-    std::cout << getyPos() << std::endl;
 }
 
 void Character::transpose(const int x, const int y) {
