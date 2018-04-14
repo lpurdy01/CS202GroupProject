@@ -4,17 +4,23 @@
 #include <iostream>
 
 int Entity::numEntities = 0;
+vector<Character> charList = { };
+Clock Clock::clock;
 
 // ----------------------Entity Functions----------------------------
-Entity::Entity (const int x, const int y) : _xCoor(x),_yCoor(y) { addEntity(); }
+Entity::Entity (const int x, const int y) : _xPos(x),_yPos(y) { addEntity(); }
 
 Entity::~Entity() { deleteEntity(); }
 
 void Entity::addEntity() { numEntities++; }
 void Entity::deleteEntity() { numEntities--; }
 
-// --------------------Character Functions---------------------------
+void Entity::setxPos(int xPos) { _xPos = xPos; }
+void Entity::setyPos(int yPos) { _yPos = yPos; }
+int Entity::getxPos() { return _xPos; }
+int Entity::getyPos() { return _yPos; }
 
+// --------------------Character Functions---------------------------
 Character::Character (std::string filepath)
 {
     addEntity();
@@ -22,6 +28,8 @@ Character::Character (std::string filepath)
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
+    
+    //charList.push_back(*this);
 }
 
 Character::Character (const int x, const int y, const std::string filepath)
@@ -31,9 +39,65 @@ Character::Character (const int x, const int y, const std::string filepath)
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
+    this->setPosition(sf::Vector2f(x,y));
+    
+    //charList.push_back(*this);
 }
 
 Character::~Character() { deleteEntity(); }
+
+void Character::setxVel(double xVel) { _xVel = xVel; }
+void Character::setyVel(double yVel) { _yVel = yVel; }
+double Character::getxVel() { return _xVel; }
+double Character::getyVel() { return _yVel; }
+
+
+void Character::updateChar() {
+    static sf::Time time = Clock::clock.getElapsedTime();
+    double timeInc = time.asSeconds();
+    //std::cout << 1/timeInc << std::endl;
+    
+    double moveValue = 5;
+    double moveFactor = 50;
+    double g = 980;
+    
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        if (getxVel() < -moveValue*moveFactor) { setxVel(-moveValue*moveFactor); }
+        else { setxVel(getxVel()-moveValue); }
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    {
+        if (getxVel() > moveValue*moveFactor) { setxVel(moveValue*moveFactor); }
+        else { setxVel(getxVel()+moveValue); }
+    }
+    else { setxVel(0); }
+    
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        setyVel(-500);
+    }
+//    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+//    {
+//        setyVel(getyVel()+moveValue);
+//    }
+    else {
+        setyVel(getyVel()+g*timeInc);
+        if (getyPos() > 1000) {
+            setyVel(0);
+        }
+    }
+    
+    this->transpose(getxVel()*timeInc,getyVel()*timeInc);
+    
+    time = Clock::clock.restart();
+}
+
+void Character::transpose(const int x, const int y) {
+    setxPos(x+getxPos());
+    setyPos(y+getyPos());
+    this->move(x,y);
+}
 
 // --------------------Background Functions---------------------------
 Background::Background (const std::string filepath) {
