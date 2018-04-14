@@ -27,25 +27,11 @@ void runOfflineGame () {
         window.draw(guy);
         
         sf::Event event;
+        
+        guy.updateChar();
+        
         while (window.pollEvent(event))
         {
-            int moveValue = 25;
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            {
-                guy.move(-moveValue,0);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            {
-                guy.move(moveValue,0);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            {
-                guy.move(0,-moveValue);
-            }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            {
-                guy.move(0,moveValue);
-            }
             if (event.type == sf::Event::Closed)
                 window.close();
         }
@@ -53,6 +39,12 @@ void runOfflineGame () {
         window.display();
     }
     return 0;
+}
+
+void getTime () {
+    // This is just a placeholder function for me to remember how to access the clock
+    sf::Time time = Clock::clock.getElapsedTime();
+    std::cout << time.asSeconds() << std::endl;
 }
 
 int main ()

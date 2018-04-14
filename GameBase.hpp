@@ -7,6 +7,17 @@
 #define GAMEBASE_HPP_INCLUDED
 #include <SFML/Graphics.hpp>
 #include <string>
+#include <vector>
+using std::vector;
+
+// -----------------------Clock Class------------------------------
+class Clock : public sf::Clock
+{
+public:
+    static Clock clock;
+private:
+};
+
 
 // ----------------------Entity Class------------------------------
 class Entity
@@ -30,8 +41,19 @@ public:
     Character (const std::string filepath);
     Character (const int x, const int y, const std::string filepath);
     ~Character();
+    
+    void setxVel(int xVel);
+    void setyVel(int yVel);
+    int getxVel();
+    int getyVel();
+    
+    void updateChar();
 private:
     sf::Texture _texture;
+    static vector<Character> charList;
+    
+    int _xVel = 0;
+    int _yVel = 0;
 };
 
 // ----------------------Background Class---------------------------
@@ -50,5 +72,7 @@ class Block : public Entity, public sf::Shape
 public:
 private:
 };
+
+
 
 #endif /* GAMEBASE_HPP_INCLUDED */
