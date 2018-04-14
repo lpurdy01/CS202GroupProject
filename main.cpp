@@ -10,22 +10,22 @@ void runOfflineGame () {
     sf::RenderWindow window(sf::VideoMode(2*windowWidth, 2*windowHeight), "SFML works!");
     //sf::CircleShape shape(50);
     //shape.setFillColor(sf::Color::Yellow);
-    
+
     //system("dir"); //Place Game Resources in this path
-    
-    
+
+
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
-    
+
     Background bg("cute_image.jpg");
     bg.setScale(2,2);
-    
+
     while (window.isOpen())
     {
         window.clear();
         window.draw(bg);
         window.draw(guy);
-        
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -49,10 +49,9 @@ void runOfflineGame () {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-        
+
         window.display();
     }
-    return 0;
 }
 
 int main ()
