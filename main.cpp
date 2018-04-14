@@ -5,6 +5,7 @@
 #include "Network.hpp"
 
 void runOfflineGame () {
+    Clock::clock.restart();
     int windowHeight = 600;
     int windowWidth = 800;
     sf::RenderWindow window(sf::VideoMode(2*windowWidth, 2*windowHeight), "SFML works!");

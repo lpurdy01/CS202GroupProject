@@ -28,10 +28,15 @@ public:
     
     static void addEntity();
     static void deleteEntity();
+    
+    void setxPos(int xPos);
+    void setyPos(int yPos);
+    int getxPos();
+    int getyPos();
 private:
     static int numEntities;
-    int _xCoor;
-    int _yCoor;
+    int _xPos;
+    int _yPos;
 };
 
 // ----------------------Character Class----------------------------
@@ -42,18 +47,20 @@ public:
     Character (const int x, const int y, const std::string filepath);
     ~Character();
     
-    void setxVel(int xVel);
-    void setyVel(int yVel);
-    int getxVel();
-    int getyVel();
+    void setxVel(double xVel);
+    void setyVel(double yVel);
+    double getxVel();
+    double getyVel();
     
     void updateChar();
+    
+    void transpose(const int xVal, const int yVal);
 private:
     sf::Texture _texture;
     static vector<Character> charList;
     
-    int _xVel = 0;
-    int _yVel = 0;
+    double _xVel = 0;
+    double _yVel = 0;
 };
 
 // ----------------------Background Class---------------------------

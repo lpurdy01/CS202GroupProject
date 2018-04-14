@@ -8,12 +8,17 @@ vector<Character> charList = { };
 Clock Clock::clock;
 
 // ----------------------Entity Functions----------------------------
-Entity::Entity (const int x, const int y) : _xCoor(x),_yCoor(y) { addEntity(); }
+Entity::Entity (const int x, const int y) : _xPos(x),_yPos(y) { addEntity(); }
 
 Entity::~Entity() { deleteEntity(); }
 
 void Entity::addEntity() { numEntities++; }
 void Entity::deleteEntity() { numEntities--; }
+
+void Entity::setxPos(int xPos) { _xPos = xPos; }
+void Entity::setyPos(int yPos) { _yPos = yPos; }
+int Entity::getxPos() { return _xPos; }
+int Entity::getyPos() { return _yPos; }
 
 // --------------------Character Functions---------------------------
 Character::Character (std::string filepath)
@@ -41,42 +46,58 @@ Character::Character (const int x, const int y, const std::string filepath)
 
 Character::~Character() { deleteEntity(); }
 
-void Character::setxVel(int xVel) { _xVel = xVel; }
-void Character::setyVel(int yVel) { _yVel = yVel; }
-int Character::getxVel() { return _xVel; }
-int Character::getyVel() { return _yVel; }
+void Character::setxVel(double xVel) { _xVel = xVel; }
+void Character::setyVel(double yVel) { _yVel = yVel; }
+double Character::getxVel() { return _xVel; }
+double Character::getyVel() { return _yVel; }
 
 
 void Character::updateChar() {
     static sf::Time time = Clock::clock.getElapsedTime();
     double timeInc = time.asSeconds();
-    std::cout << timeInc << std::endl;
+    //std::cout << 1/timeInc << std::endl;
     
-    int moveValue = 5;
+    double moveValue = 5;
+    double moveFactor = 50;
+    double g = 980;
     
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
-        setxVel(getxVel()-moveValue);
+        if (getxVel() < -moveValue*moveFactor) { setxVel(-moveValue*moveFactor); }
+        else { setxVel(getxVel()-moveValue); }
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
-        setxVel(getxVel()+moveValue);
+        if (getxVel() > moveValue*moveFactor) { setxVel(moveValue*moveFactor); }
+        else { setxVel(getxVel()+moveValue); }
     }
     else { setxVel(0); }
     
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
-        setyVel(getyVel()-moveValue);
+        setyVel(-500);
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        setyVel(getyVel()+moveValue);
+//    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+//    {
+//        setyVel(getyVel()+moveValue);
+//    }
+    else {
+        setyVel(getyVel()+g*timeInc);
+        if (getyPos() > 1000) {
+            setyVel(0);
+        }
     }
-    else { setyVel(0); }
     
-    this->move(getxVel()*timeInc,getyVel()*timeInc);
+    this->transpose(getxVel()*timeInc,getyVel()*timeInc);
     
     time = Clock::clock.restart();
+    std::cout << getyPos() << std::endl;
+}
+
+void Character::transpose(const int x, const int y) {
+    setxPos(x+getxPos());
+    setyPos(y+getyPos());
+    this->move(x,y);
 }
 
 // --------------------Background Functions---------------------------
