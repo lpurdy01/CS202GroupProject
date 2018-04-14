@@ -17,7 +17,7 @@ void runServer()
     {
         NetworkPackage datapack;
         datapack = server.recieveNet();
-        cout << "Recieved Datapack" << endl;
+        //cout << "Recieved Datapack" << endl;
         vector<Character> decodedChars = datapack.decodeCharacters();
         for(Character i:decodedChars){
             cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;

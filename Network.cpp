@@ -31,7 +31,7 @@ int NetworkClient::connect(string ip, int port)
 }
 int NetworkClient::send(sf::Packet packet)
 {
-    cout << "Sending Packet" << endl;
+    //cout << "Sending Packet" << endl;
     socket.send(packet);
     return 1;
 }
@@ -91,7 +91,7 @@ void NetworkPackage::encodeCharacter(Character & ckar)
 void NetworkPackage::composePackage()
 {
     *this << numberOfCharacters;
-    *this << packetContents;
+    this -> append(packetContents.getData(),packetContents.getDataSize());
 }
 vector<Character> NetworkPackage::decodeCharacters()
 {
@@ -103,7 +103,7 @@ vector<Character> NetworkPackage::decodeCharacters()
     {
         vector<Character> charvect;
         *this >> numberOfCharacters;
-        cout << "Number of Characters Recieved: " << numberOfCharacters << endl;
+        //cout << "Number of Characters Recieved: " << numberOfCharacters << endl;
         bool okToDecode = true;
         for(size_t i = 0; i < numberOfCharacters; i++)
         {
@@ -116,6 +116,7 @@ vector<Character> NetworkPackage::decodeCharacters()
                 double xVel;
                 double yVel;
                 *this >> characterDataSize;
+                //cout << characterDataSize << endl;
                 Character holder;
                 sf::Uint32 siz = sizeof(holder.getID()) + (sizeof(holder.getxPos())*2) + (sizeof(holder.getxVel())*2);
                 if(characterDataSize == siz){
