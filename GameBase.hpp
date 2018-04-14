@@ -30,8 +30,8 @@ public:
     static void deleteEntity();
     void setxPos(int xPos);
     void setyPos(int yPos);
-    int getxPos();
-    int getyPos();
+    sf::Int32 getxPos();
+    sf::Int32 getyPos();
 
 private:
     static int numEntities;
@@ -43,14 +43,16 @@ private:
 class Character : public Entity, public sf::Sprite
 {
 public:
-    Character (const std::string filepath);
+    Character (const std::string filepath = "Drawing.png");
     Character (const int x, const int y, const std::string filepath);
     ~Character();
 
     void setxVel(double xVel);
     void setyVel(double yVel);
+    void setID(sf::Uint8 ID) {_ID = ID;}
     double getxVel();
     double getyVel();
+    sf::Uint8 getID() {return _ID;}
 
     void updateChar();
 
@@ -61,6 +63,7 @@ private:
 
     double _xVel = 0;
     double _yVel = 0;
+    sf::Uint8 _ID= 0;
 };
 
 // ----------------------Background Class---------------------------
