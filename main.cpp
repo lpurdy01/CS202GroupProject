@@ -47,7 +47,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
     }
 }
 
-INT32 clientSquak( NetworkClient & serverConnection)
+sf::Int32 clientSquak( NetworkClient & serverConnection)
 {
 
     return 0;
