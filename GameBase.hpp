@@ -39,6 +39,20 @@ private:
     int _yPos;
 };
 
+// ----------------------Collision Class----------------------------
+template<typename T>
+class CollisionGrid : public sf::Vector2<T> {
+public:
+    CollisionGrid();
+    
+    CollisionGrid(T x1, T x2, T y1, T y2);
+    
+    T x1;
+    T x2;
+    T y1;
+    T y2;
+};
+
 // ----------------------Character Class----------------------------
 class Character : public Entity, public sf::Sprite
 {
@@ -56,7 +70,7 @@ public:
 
     void updateChar();
 
-    void transpose(const int xVal, const int yVal);
+    void transpose(const int &xVal, const int &yVal);
 private:
     sf::Texture _texture;
     static vector<Character> charList;
