@@ -8,6 +8,7 @@
 #include "Network.hpp"
 #include <thread>
 
+
 void runServer()
 {
     std::cout << "Starting Server" << std::endl;
@@ -20,7 +21,7 @@ void runServer()
         datapack = server.recieveNet();
         //cout << "Recieved Datapack" << endl;
         datapack >> packType;
-        if(packType == 2)
+        if(packType == CharacterPacket)
         {
             vector<Character> decodedChars = datapack.decodeCharacters();
             for(Character i:decodedChars)
@@ -28,33 +29,33 @@ void runServer()
                 //cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
             }
         }
-        if(packType == 1)
+        if(packType == SquakPacket)
         {
-
+            cout << "Recieved ID Request" << endl;
+            server.handleClientSquak(datapack);
+            cout << "Gave Client ID: " << (server.getGreatestClient() - 1) << endl;
         }
     }
 }
 
-void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
+void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf::Mutex & clientSyncLock)
 {
     while(true)
     {
         NetworkPackage pack;
+        clientSyncLock.lock();
         pack.encodeCharacter(mainCharacter);
+        clientSyncLock.unlock();
         pack.composePackage();
         serverConnection.send(pack);
         sf::sleep(sf::milliseconds(100));
     }
 }
 
-sf::Int32 clientSquak( NetworkClient & serverConnection)
-{
-
-    return 0;
-}
 
 void runGame (NetworkClient & serverConnection)
 {
+    sf::Mutex clientSyncLock;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
     int windowHeight = desktop.height/1.5;
@@ -64,32 +65,35 @@ void runGame (NetworkClient & serverConnection)
     //shape.setFillColor(sf::Color::Yellow);
 
     //system("dir"); //Place Game Resources in this path
-
+    auto clientID = serverConnection.clientSquak();
 
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
     std::cout << "width: " << guy.getLocalBounds().width << "  height: " << guy.getLocalBounds().height << std::endl;
+    guy.setID(clientID);
 
   //  Background bg("cute_image.jpg");
    // bg.setScale(2,2);
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
 
-    sf::Thread clientSnc([&serverConnection, &guy]()
+    sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock]()
     {
-        clientSync(serverConnection, guy);
+        clientSync(serverConnection, guy, clientSyncLock);
     });
     clientSnc.launch();
 
     while (window.isOpen())
     {
+        clientSyncLock.lock(); //Stops Threads from editing variables
         window.clear();
         window.draw(bg);
         window.draw(guy);
 
         sf::Event event;
 
-        guy.updateChar();
+        guy.updateChar(); //Allows Threads to edit Variables
+        clientSyncLock.unlock();
 
         while (window.pollEvent(event))
         {
@@ -98,6 +102,7 @@ void runGame (NetworkClient & serverConnection)
         }
 
         window.display();
+
     }
     clientSnc.terminate();
 }

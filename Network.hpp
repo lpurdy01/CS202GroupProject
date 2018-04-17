@@ -4,6 +4,10 @@
 
 #ifndef NETWORK_HPP_INCLUDED
 #define NETWORK_HPP_INCLUDED
+#define CharacterPacket 2
+#define SquakPacket 1
+#define ClientIDPacket 3
+#define ObjectPacket 4
 
 
 #include <SFML/Network.hpp>
@@ -29,7 +33,7 @@ protected:
     sf::Packet packetContents;
     vector<Character> decodedCharacters;
     bool charactersDecoded = false;
-    sf::Uint8 PacketType = 2;
+    sf::Uint8 PacketType = CharacterPacket;
 
 };
 
@@ -39,10 +43,13 @@ class NetworkClient
 public:
     int connect(string ip , int port = 53000);
     int send(sf::Packet packet);
+    sf::Uint8 clientSquak();
+    sf::Packet recieve();
 
 protected:
     sf::TcpSocket socket;
     sf::Socket::Status status;
+    sf::Uint8 clientID;
 
 };
 
@@ -54,10 +61,13 @@ public:
     int acceptClient();
     sf::Packet recieve();
     NetworkPackage recieveNet();
+    bool handleClientSquak(sf::Packet packet);
+    int getGreatestClient() {return greatestClient;}
 
 protected:
     sf::TcpListener listener;
     sf::TcpSocket client;
+    sf::Int32 greatestClient = 1;
 };
 
 

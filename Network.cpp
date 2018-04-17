@@ -36,6 +36,27 @@ int NetworkClient::send(sf::Packet packet)
     return 1;
 }
 
+sf::Uint8 NetworkClient::clientSquak(){
+    cout << "Sending Client Squak Packet" << endl;
+    sf::Packet dataPack;
+    sf::Uint8 packetType = SquakPacket;
+    dataPack << packetType;
+    socket.send(dataPack);
+    dataPack = recieve();
+    dataPack >> packetType;
+    if(packetType = ClientIDPacket){
+        sf::Uint8 charID;
+        dataPack >> charID;
+        clientID = charID;
+        return charID;
+    }
+    else {
+        cout << "Bad Client ID" << endl;
+        return 0;
+    }
+
+}
+
 int NetworkServer::listen(int port)
 {
     cout << "Starting to Listen" << endl;
@@ -67,12 +88,29 @@ sf::Packet NetworkServer::recieve()
     client.receive(data);
     return data;
 }
+
+sf::Packet NetworkClient::recieve(){
+    sf::Packet data;
+    socket.receive(data);
+    return data;
+}
+
+bool NetworkServer::handleClientSquak(sf::Packet packet){
+    sf::Packet clientIDPacket;
+    sf::Uint8 packetType = ClientIDPacket;
+    clientIDPacket << packetType << greatestClient;
+    greatestClient++;
+    client.send(clientIDPacket);
+    return 1;
+}
+
 NetworkPackage NetworkServer::recieveNet()
 {
     NetworkPackage data;
     client.receive(data);
     return data;
 }
+
 
 int NetworkServer::prepare()
 {

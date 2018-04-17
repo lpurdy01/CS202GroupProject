@@ -85,6 +85,7 @@ public:
     double getxVel();
     double getyVel();
     sf::Uint8 getID() {return _ID;}
+    void setID(int ID) {_ID = ID;}
 
     void updateChar();
 
