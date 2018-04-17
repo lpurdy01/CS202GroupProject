@@ -43,23 +43,23 @@ class CollisionGrid : public sf::Vector2f {
 public:
     CollisionGrid();
     
-    CollisionGrid(int x1, int x2, int y1, int y2);
+    CollisionGrid(float x1, float x2, float y1, float y2);
     
     ~CollisionGrid();
     
-    int x1;
-    int x2;
-    int y1;
-    int y2;
+    float x1;
+    float x2;
+    float y1;
+    float y2;
 };
 
 // ----------------------Collidable Class--------------------------
 class Collidable : public sf::Transformable {
 public:
-    Collidable();
+    Collidable(const float height, const float width);
     ~Collidable();
     
-    void updateGrid(const int x1, const int x2, const int y1, const int y2);
+    void updateGrid(const float x1, const float x2, const float y1, const float y2);
     
     CollisionGrid getGrid();
     
@@ -72,7 +72,7 @@ private:
 };
 
 // ----------------------Character Class----------------------------
-class Character : public Entity, public sf::Sprite
+class Character : public Entity, public sf::Sprite, public Collidable
 {
 public:
     Character (const std::string filepath = "Drawing.png");

@@ -121,8 +121,8 @@ int NetworkServer::prepare()
 
 void NetworkPackage::encodeCharacter(Character & ckar)
 {
-    sf::Uint32 siz = sizeof(ckar.getID()) + (sizeof((sf::Int32)(ckar.getPosition().x))*2) + (sizeof(ckar.getxVel())*2);
-    packetContents << siz << ckar.getID() << ((sf::Int32)(ckar.getPosition().x)) << ((sf::Int32)(ckar.getPosition().y)) << ckar.getxVel() << ckar.getyVel(); //getNCorr is int32
+    sf::Uint32 siz = sizeof(ckar.getID()) + (sizeof((sf::Int32)(ckar.sf::Sprite::getPosition().x))*2) + (sizeof(ckar.getxVel())*2);
+    packetContents << siz << ckar.getID() << ((sf::Int32)(ckar.sf::Sprite::getPosition().x)) << ((sf::Int32)(ckar.sf::Sprite::getPosition().y)) << ckar.getxVel() << ckar.getyVel(); //getNCorr is int32
     numberOfCharacters++;
 
 }

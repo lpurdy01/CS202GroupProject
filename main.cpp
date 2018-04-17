@@ -6,7 +6,6 @@
 #include "Network.hpp"
 #include "ResourceFunctions.hpp"
 #include "Network.hpp"
-#include <thread>
 
 
 void runServer()
@@ -68,7 +67,7 @@ void runGame (NetworkClient & serverConnection)
     auto clientID = serverConnection.clientSquak();
 
     Character guy("Drawing.png");
-    guy.setScale(.25, .25);
+    guy.sf::Sprite::setScale(.25, .25);
     std::cout << "width: " << guy.getLocalBounds().width << "  height: " << guy.getLocalBounds().height << std::endl;
     guy.setID(clientID);
 
