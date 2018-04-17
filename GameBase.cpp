@@ -99,8 +99,6 @@ void Character::updateChar() {
             setyVel(0);
         }
     }
-    this->transpose(getxVel()*timeInc,getyVel()*timeInc);
-
 
     this->move(getxVel()*timeInc,getyVel()*timeInc);
 
