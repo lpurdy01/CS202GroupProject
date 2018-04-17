@@ -54,6 +54,7 @@ double Character::getyVel() { return _yVel; }
 
 void Character::updateChar() {
     static sf::Time time = Clock::clock.getElapsedTime();
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     double timeInc = time.asSeconds();
     //std::cout << 1/timeInc << std::endl;
 
@@ -95,7 +96,7 @@ void Character::updateChar() {
 //    }
     else {
         setyVel(getyVel()+g*timeInc);
-        if (this->getPosition().y > 1000) {
+        if (this->getPosition().y > desktop.height/2.0) {
             setyVel(0);
         }
     }
