@@ -6,7 +6,7 @@
 #include "Network.hpp"
 #include "ResourceFunctions.hpp"
 #include "Network.hpp"
-
+#include <thread>
 
 void runServer()
 {
@@ -24,6 +24,7 @@ void runServer()
         }
     }
 }
+
 void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
 {
     while(true){
