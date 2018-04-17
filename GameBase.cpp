@@ -63,13 +63,25 @@ void Character::updateChar() {
     
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
-        if (getxVel() < -moveValue*moveFactor) { setxVel(-moveValue*moveFactor); }
-        else { setxVel(getxVel()-moveValue); }
+        if (getxVel() < -moveValue*moveFactor)
+        {
+            setxVel(-moveValue*moveFactor);
+        }
+        else
+        {
+            setxVel(getxVel()-moveValue);
+        }
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
-        if (getxVel() > moveValue*moveFactor) { setxVel(moveValue*moveFactor); }
-        else { setxVel(getxVel()+moveValue); }
+        if (getxVel() > moveValue*moveFactor)
+        {
+            setxVel(moveValue*moveFactor);
+        }
+        else
+        {
+            setxVel(getxVel()+moveValue);
+        }
     }
     else { setxVel(0); }
     
@@ -83,20 +95,20 @@ void Character::updateChar() {
 //    }
     else {
         setyVel(getyVel()+g*timeInc);
-        if (getyPos() > 1000) {
+        if (this->getPosition().y > 1000) {
             setyVel(0);
         }
     }
     
-    this->transpose(getxVel()*timeInc,getyVel()*timeInc);
+    this->move(getxVel()*timeInc,getyVel()*timeInc);
     
     time = Clock::clock.restart();
 }
 
-void Character::transpose(const int x, const int y) {
+void Character::transpose(const int &x, const int &y) {
     setxPos(x+getxPos());
     setyPos(y+getyPos());
-    this->move(x,y);
+    this->setPosition(getxPos(), getyPos());
 }
 
 // --------------------Background Functions---------------------------

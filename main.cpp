@@ -50,8 +50,10 @@ void runGame (NetworkClient & serverConnection)
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
 
-    Background bg("cute_image.jpg");
-    bg.setScale(2,2);
+//    Background bg("cute_image.jpg");
+//    bg.setScale(2,2);
+    sf::RectangleShape bg(sf::Vector2f(2*windowWidth,2*windowHeight));
+    bg.setFillColor(sf::Color::White);
 
     sf::Thread clientSnc([&serverConnection, &guy]()
     {
