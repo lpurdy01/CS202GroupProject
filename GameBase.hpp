@@ -18,7 +18,6 @@ public:
 private:
 };
 
-
 // ----------------------Entity Class------------------------------
 class Entity
 {
@@ -40,17 +39,36 @@ private:
 };
 
 // ----------------------Collision Class----------------------------
-template<typename T>
-class CollisionGrid : public sf::Vector2<T> {
+class CollisionGrid : public sf::Vector2f {
 public:
     CollisionGrid();
     
-    CollisionGrid(T x1, T x2, T y1, T y2);
+    CollisionGrid(int x1, int x2, int y1, int y2);
     
-    T x1;
-    T x2;
-    T y1;
-    T y2;
+    ~CollisionGrid();
+    
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+};
+
+// ----------------------Collidable Class--------------------------
+class Collidable : public sf::Transformable {
+public:
+    Collidable();
+    ~Collidable();
+    
+    void updateGrid(const int x1, const int x2, const int y1, const int y2);
+    
+    CollisionGrid getGrid();
+    
+    int getHeight();
+    int getWidth();
+private:
+    const int _height;
+    const int _width;
+    CollisionGrid _position;
 };
 
 // ----------------------Character Class----------------------------

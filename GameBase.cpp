@@ -20,6 +20,49 @@ void Entity::setyPos(int yPos) { _yPos = yPos; }
 int Entity::getxPos() { return _xPos; }
 int Entity::getyPos() { return _yPos; }
 
+// --------------------Collision Functions---------------------------
+CollisionGrid::CollisionGrid()
+{
+    
+}
+
+CollisionGrid::~CollisionGrid()
+{
+    
+}
+
+// -------------------Collidable Functions---------------------------
+Collidable::Collidable() : _height(0), _width(0)
+{
+
+}
+
+Collidable::~Collidable ()
+{
+    
+}
+
+void Collidable::updateGrid(const int x1, const int x2, const int y1, const int y2)
+{
+    
+}
+
+CollisionGrid Collidable::getGrid()
+{
+    return _position;
+}
+
+int Collidable::getHeight()
+{
+    return _height;
+}
+
+int Collidable::getWidth()
+{
+    return _width;
+}
+
+
 // --------------------Character Functions---------------------------
 Character::Character (std::string filepath)
 {
@@ -28,8 +71,6 @@ Character::Character (std::string filepath)
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
-
-    //charList.push_back(*this);
 }
 
 Character::Character (const int x, const int y, const std::string filepath)

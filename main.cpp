@@ -25,7 +25,7 @@ void runServer()
             vector<Character> decodedChars = datapack.decodeCharacters();
             for(Character i:decodedChars)
             {
-                cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                //cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
             }
         }
         if(packType == 1)
@@ -68,6 +68,7 @@ void runGame (NetworkClient & serverConnection)
 
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
+    std::cout << "width: " << guy.getLocalBounds().width << "  height: " << guy.getLocalBounds().height << std::endl;
 
   //  Background bg("cute_image.jpg");
    // bg.setScale(2,2);
