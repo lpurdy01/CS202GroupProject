@@ -29,6 +29,7 @@ protected:
     sf::Packet packetContents;
     vector<Character> decodedCharacters;
     bool charactersDecoded = false;
+    sf::Uint8 PacketType = 2;
 
 };
 

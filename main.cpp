@@ -15,25 +15,42 @@ void runServer()
     server.prepare();
     while(true)
     {
+        sf::Uint8 packType = 0;
         NetworkPackage datapack;
         datapack = server.recieveNet();
         //cout << "Recieved Datapack" << endl;
-        vector<Character> decodedChars = datapack.decodeCharacters();
-        for(Character i:decodedChars){
-            cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+        datapack >> packType;
+        if(packType == 2)
+        {
+            vector<Character> decodedChars = datapack.decodeCharacters();
+            for(Character i:decodedChars)
+            {
+                cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+            }
+        }
+        if(packType == 1)
+        {
+
         }
     }
 }
 
 void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
 {
-    while(true){
+    while(true)
+    {
         NetworkPackage pack;
         pack.encodeCharacter(mainCharacter);
         pack.composePackage();
         serverConnection.send(pack);
         sf::sleep(sf::milliseconds(100));
     }
+}
+
+INT32 clientSquak( NetworkClient & serverConnection)
+{
+
+    return 0;
 }
 
 void runGame (NetworkClient & serverConnection)
@@ -51,8 +68,8 @@ void runGame (NetworkClient & serverConnection)
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
 
-//    Background bg("cute_image.jpg");
-//    bg.setScale(2,2);
+  //  Background bg("cute_image.jpg");
+   // bg.setScale(2,2);
     sf::RectangleShape bg(sf::Vector2f(2*windowWidth,2*windowHeight));
     bg.setFillColor(sf::Color::White);
 
