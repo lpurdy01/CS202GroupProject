@@ -28,7 +28,7 @@ Character::Character (std::string filepath)
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
-    
+
     //charList.push_back(*this);
 }
 
@@ -40,7 +40,7 @@ Character::Character (const int x, const int y, const std::string filepath)
     }
     this->setTexture(_texture);
     this->setPosition(sf::Vector2f(x,y));
-    
+
     //charList.push_back(*this);
 }
 
@@ -56,11 +56,11 @@ void Character::updateChar() {
     static sf::Time time = Clock::clock.getElapsedTime();
     double timeInc = time.asSeconds();
     //std::cout << 1/timeInc << std::endl;
-    
+
     double moveValue = 5;
     double moveFactor = 50;
     double g = 980;
-    
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
         if (getxVel() < -moveValue*moveFactor)
@@ -84,7 +84,7 @@ void Character::updateChar() {
         }
     }
     else { setxVel(0); }
-    
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
         setyVel(-500);
@@ -99,9 +99,11 @@ void Character::updateChar() {
             setyVel(0);
         }
     }
-    
+    this->transpose(getxVel()*timeInc,getyVel()*timeInc);
+
+
     this->move(getxVel()*timeInc,getyVel()*timeInc);
-    
+
     time = Clock::clock.restart();
 }
 
