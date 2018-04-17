@@ -55,7 +55,6 @@ double Character::getyVel() { return _yVel; }
 void Character::updateChar() {
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     static sf::Time time = Clock::clock.getElapsedTime();
-    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     double timeInc = time.asSeconds();
     //std::cout << 1/timeInc << std::endl;
 
@@ -97,11 +96,8 @@ void Character::updateChar() {
 //    }
     else {
         setyVel(getyVel()+g*timeInc);
-<<<<<<< HEAD
+
         if (this->getPosition().y > desktop.height/1.5 - 150) {
-=======
-        if (this->getPosition().y > desktop.height/2.0) {
->>>>>>> e45dbb3474dbb28c2fab0b37f2bfc8e8818fdcdb
             setyVel(0);
         }
     }
