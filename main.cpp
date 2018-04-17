@@ -53,10 +53,11 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
 
 void runGame (NetworkClient & serverConnection)
 {
+    sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
-    int windowHeight = 600;
-    int windowWidth = 800;
-    sf::RenderWindow window(sf::VideoMode(2*windowWidth, 2*windowHeight), "SFML works!");
+    int windowHeight = desktop.height/1.5;
+    int windowWidth = desktop.width/1.5;
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "TESTING!");
     //sf::CircleShape shape(50);
     //shape.setFillColor(sf::Color::Yellow);
 
@@ -69,7 +70,7 @@ void runGame (NetworkClient & serverConnection)
 
   //  Background bg("cute_image.jpg");
    // bg.setScale(2,2);
-    sf::RectangleShape bg(sf::Vector2f(2*windowWidth,2*windowHeight));
+    sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
 
     sf::Thread clientSnc([&serverConnection, &guy]()
