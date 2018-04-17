@@ -6,7 +6,6 @@
 #include "Network.hpp"
 #include "ResourceFunctions.hpp"
 #include "Network.hpp"
-#include <thread>
 
 
 void runServer()
@@ -38,12 +37,14 @@ void runServer()
     }
 }
 
-void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
+void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf::Mutex & clientSyncLock)
 {
     while(true)
     {
         NetworkPackage pack;
+        clientSyncLock.lock();
         pack.encodeCharacter(mainCharacter);
+        clientSyncLock.unlock();
         pack.composePackage();
         serverConnection.send(pack);
         sf::sleep(sf::milliseconds(100));
@@ -53,6 +54,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
 
 void runGame (NetworkClient & serverConnection)
 {
+    sf::Mutex clientSyncLock;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
     int windowHeight = desktop.height/1.5;
@@ -73,21 +75,23 @@ void runGame (NetworkClient & serverConnection)
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
 
-    sf::Thread clientSnc([&serverConnection, &guy]()
+    sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock]()
     {
-        clientSync(serverConnection, guy);
+        clientSync(serverConnection, guy, clientSyncLock);
     });
     clientSnc.launch();
 
     while (window.isOpen())
     {
+        clientSyncLock.lock(); //Stops Threads from editing variables
         window.clear();
         window.draw(bg);
         window.draw(guy);
 
         sf::Event event;
 
-        guy.updateChar();
+        guy.updateChar(); //Allows Threads to edit Variables
+        clientSyncLock.unlock();
 
         while (window.pollEvent(event))
         {
@@ -96,6 +100,7 @@ void runGame (NetworkClient & serverConnection)
         }
 
         window.display();
+
     }
     clientSnc.terminate();
 }
