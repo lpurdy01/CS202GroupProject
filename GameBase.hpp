@@ -44,9 +44,9 @@ template<typename T>
 class CollisionGrid : public sf::Vector2<T> {
 public:
     CollisionGrid();
-    
+
     CollisionGrid(T x1, T x2, T y1, T y2);
-    
+
     T x1;
     T x2;
     T y1;
@@ -67,6 +67,7 @@ public:
     double getxVel();
     double getyVel();
     sf::Uint8 getID() {return _ID;}
+    void setID(int ID) {_ID = ID;}
 
     void updateChar();
 

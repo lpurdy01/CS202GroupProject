@@ -8,6 +8,7 @@
 #include "Network.hpp"
 #include <thread>
 
+
 void runServer()
 {
     std::cout << "Starting Server" << std::endl;
@@ -20,7 +21,7 @@ void runServer()
         datapack = server.recieveNet();
         //cout << "Recieved Datapack" << endl;
         datapack >> packType;
-        if(packType == 2)
+        if(packType == CharacterPacket)
         {
             vector<Character> decodedChars = datapack.decodeCharacters();
             for(Character i:decodedChars)
@@ -28,9 +29,11 @@ void runServer()
                 cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
             }
         }
-        if(packType == 1)
+        if(packType == SquakPacket)
         {
-
+            cout << "Recieved ID Request" << endl;
+            server.handleClientSquak(datapack);
+            cout << "Gave Client ID: " << (server.getGreatestClient() - 1) << endl;
         }
     }
 }
@@ -47,11 +50,6 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter)
     }
 }
 
-sf::Int32 clientSquak( NetworkClient & serverConnection)
-{
-
-    return 0;
-}
 
 void runGame (NetworkClient & serverConnection)
 {
@@ -63,10 +61,11 @@ void runGame (NetworkClient & serverConnection)
     //shape.setFillColor(sf::Color::Yellow);
 
     //system("dir"); //Place Game Resources in this path
-
+    auto clientID = serverConnection.clientSquak();
 
     Character guy("Drawing.png");
     guy.setScale(.25, .25);
+    guy.setID(clientID);
 
   //  Background bg("cute_image.jpg");
    // bg.setScale(2,2);
