@@ -99,15 +99,11 @@ void Character::updateChar() {
             setyVel(0);
         }
     }
-<<<<<<< HEAD
-
     this->transpose(getxVel()*timeInc,getyVel()*timeInc);
 
-=======
-    
+
     this->move(getxVel()*timeInc,getyVel()*timeInc);
-    
->>>>>>> 3f69b80015d541f7bd9c178dd966df06e80b2280
+
     time = Clock::clock.restart();
 }
 
