@@ -42,11 +42,11 @@ private:
 class CollisionGrid : public sf::Vector2f {
 public:
     CollisionGrid();
-    
+
     CollisionGrid(float x1, float x2, float y1, float y2);
-    
+
     ~CollisionGrid();
-    
+
     float x1;
     float x2;
     float y1;
@@ -58,11 +58,11 @@ class Collidable : public sf::Transformable {
 public:
     Collidable(const float height, const float width);
     ~Collidable();
-    
+
     void updateGrid(const float x1, const float x2, const float y1, const float y2);
-    
+
     CollisionGrid getGrid();
-    
+
     int getHeight();
     int getWidth();
 private:
@@ -94,6 +94,7 @@ private:
     sf::Texture _texture;
     static vector<Character> charList;
 
+    int oneTap = 0;
     double _xVel = 0;
     double _yVel = 0;
     sf::Uint8 _ID= 0;

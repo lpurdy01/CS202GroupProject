@@ -23,12 +23,12 @@ int Entity::getyPos() { return _yPos; }
 // --------------------Collision Functions---------------------------
 CollisionGrid::CollisionGrid()
 {
-    
+
 }
 
 CollisionGrid::~CollisionGrid()
 {
-    
+
 }
 
 // -------------------Collidable Functions---------------------------
@@ -42,12 +42,12 @@ Collidable::Collidable(const float height, const float width) : _height(height),
 
 Collidable::~Collidable ()
 {
-    
+
 }
 
 void Collidable::updateGrid(const float x1, const float x2, const float y1, const float y2)
 {
-    
+
 }
 
 CollisionGrid Collidable::getGrid()
@@ -133,8 +133,10 @@ void Character::updateChar() {
     }
     else { setxVel(0); }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (oneTap == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
+        std::cout << "boing" << std::endl;
+        oneTap = 0;
         setyVel(-500);
     }
 //    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -145,6 +147,8 @@ void Character::updateChar() {
         setyVel(getyVel()+g*timeInc);
 
         if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) {
+            std::cout << "bottom" << std::endl;
+            oneTap = 1;
             setyVel(0);
         }
     }
