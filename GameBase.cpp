@@ -109,7 +109,12 @@ void Character::updateChar() {
     double moveFactor = 50;
     double g = 980;
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    {
+        setxVel(0);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
         if (getxVel() < -moveValue*moveFactor)
         {
