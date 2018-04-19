@@ -109,12 +109,17 @@ void Character::updateChar() {
     double moveFactor = 50;
     double g = 980;
 
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+    {
+        moveFactor = 100;
+    }
 
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) // stop movement if left and right
     {
         setxVel(0);
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) // move left
     {
         if (getxVel() < -moveValue*moveFactor)
         {
@@ -125,7 +130,7 @@ void Character::updateChar() {
             setxVel(getxVel()-moveValue);
         }
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) //move right
     {
         if (getxVel() > moveValue*moveFactor)
         {
