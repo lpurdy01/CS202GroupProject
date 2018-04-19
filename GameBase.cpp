@@ -132,11 +132,11 @@ void Character::updateChar() {
         }
     }
     else { setxVel(0); }
+    std::cout << oneTap << std::endl;
 
-    if (oneTap == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (oneTap > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
-        std::cout << "boing" << std::endl;
-        oneTap = 0;
+        oneTap--;
         setyVel(-500);
     }
 //    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -147,8 +147,8 @@ void Character::updateChar() {
         setyVel(getyVel()+g*timeInc);
 
         if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) {
-            std::cout << "bottom" << std::endl;
-            oneTap = 1;
+            if(oneTap<75)
+                oneTap++;
             setyVel(0);
         }
     }
