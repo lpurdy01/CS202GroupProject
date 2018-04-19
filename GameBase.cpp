@@ -132,7 +132,6 @@ void Character::updateChar() {
         }
     }
     else { setxVel(0); }
-    std::cout << oneTap << std::endl;
 
     if (oneTap > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
@@ -147,7 +146,7 @@ void Character::updateChar() {
         setyVel(getyVel()+g*timeInc);
 
         if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) {
-            if(oneTap<75)
+            if(oneTap<65)
                 oneTap++;
             setyVel(0);
         }
