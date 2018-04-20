@@ -111,7 +111,7 @@ void Character::updateChar() {
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
     {
-        moveFactor = 100;
+        moveFactor = 100; //sprinting
     }
 
 
@@ -143,7 +143,7 @@ void Character::updateChar() {
     }
     else { setxVel(0); }
 
-    if (oneTap > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (oneTap > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) // jump
     {
         oneTap--;
         setyVel(-500);
@@ -155,7 +155,7 @@ void Character::updateChar() {
     else {
         setyVel(getyVel()+g*timeInc);
 
-        if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) {
+        if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) { // this may need to be edited to make collision boxes work,
             if(oneTap<65)
                 oneTap++;
             setyVel(0);
