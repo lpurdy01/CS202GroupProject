@@ -11,6 +11,8 @@
 void runServer()
 {
     std::cout << "Starting Server" << std::endl;
+    sf::IpAddress ipLocal = sf::IpAddress::getLocalAddress();
+    cout << "IP Address: " << ipLocal << endl;
     NetworkServer server;
     server.prepare();
     while(true)
@@ -84,14 +86,15 @@ void runGame (NetworkClient & serverConnection)
     while (window.isOpen())
     {
         clientSyncLock.lock(); //Stops Threads from editing variables
+        //Place any variable manipulation here
         window.clear();
         window.draw(bg);
         window.draw(guy);
 
         sf::Event event;
 
-        guy.updateChar(); //Allows Threads to edit Variables
-        clientSyncLock.unlock();
+        guy.updateChar();
+        clientSyncLock.unlock(); //Allows Threads to edit Variables
 
         while (window.pollEvent(event))
         {

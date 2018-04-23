@@ -72,10 +72,11 @@ int NetworkServer::listen(int port)
 
 int NetworkServer::acceptClient()
 {
+    sf::TcpSocket tempClient;
     cout << "Waiting for Client" << endl;
-    if (listener.accept(client) != sf::Socket::Done)
+    if (listener.accept(tempClient) != sf::Socket::Done)
     {
-        cout << "Something Bad happened" << endl;
+        cout << "Something Bad happened, Client didn't Connect" << endl;
         return 0;
     }
     cout << "Found Client: " << client.getRemoteAddress() << endl;
