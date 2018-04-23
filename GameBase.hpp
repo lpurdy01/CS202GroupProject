@@ -18,7 +18,6 @@ public:
 private:
 };
 
-
 // ----------------------Entity Class------------------------------
 class Entity
 {
@@ -40,21 +39,40 @@ private:
 };
 
 // ----------------------Collision Class----------------------------
-template<typename T>
-class CollisionGrid : public sf::Vector2<T> {
+class CollisionGrid : public sf::Vector2f {
 public:
     CollisionGrid();
 
-    CollisionGrid(T x1, T x2, T y1, T y2);
+    CollisionGrid(float x1, float x2, float y1, float y2);
 
-    T x1;
-    T x2;
-    T y1;
-    T y2;
+    ~CollisionGrid();
+
+    float x1;
+    float x2;
+    float y1;
+    float y2;
+};
+
+// ----------------------Collidable Class--------------------------
+class Collidable : public sf::Transformable {
+public:
+    Collidable(const float height, const float width);
+    ~Collidable();
+
+    void updateGrid(const float x1, const float x2, const float y1, const float y2);
+
+    CollisionGrid getGrid();
+
+    int getHeight();
+    int getWidth();
+private:
+    const int _height;
+    const int _width;
+    CollisionGrid _position;
 };
 
 // ----------------------Character Class----------------------------
-class Character : public Entity, public sf::Sprite
+class Character : public Entity, public sf::Sprite, public Collidable
 {
 public:
     Character (const std::string filepath = "Drawing.png");
@@ -76,6 +94,7 @@ private:
     sf::Texture _texture;
     static vector<Character> charList;
 
+    int oneTap = 0;
     double _xVel = 0;
     double _yVel = 0;
     sf::Uint8 _ID= 0;

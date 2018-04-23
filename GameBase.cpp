@@ -20,26 +20,73 @@ void Entity::setyPos(int yPos) { _yPos = yPos; }
 int Entity::getxPos() { return _xPos; }
 int Entity::getyPos() { return _yPos; }
 
+// --------------------Collision Functions---------------------------
+CollisionGrid::CollisionGrid()
+{
+
+}
+
+CollisionGrid::~CollisionGrid()
+{
+
+}
+
+// -------------------Collidable Functions---------------------------
+Collidable::Collidable(const float height, const float width) : _height(height), _width(width)
+{
+    _position.x1 = this->getPosition().x;
+    _position.x2 = this->getPosition().x + (float)getWidth();
+    _position.y1 = this->getPosition().y;
+    _position.y2 = this->getPosition().y + (float)getHeight();
+}
+
+Collidable::~Collidable ()
+{
+
+}
+
+void Collidable::updateGrid(const float x1, const float x2, const float y1, const float y2)
+{
+
+}
+
+CollisionGrid Collidable::getGrid()
+{
+    return _position;
+}
+
+int Collidable::getHeight()
+{
+    return _height;
+}
+
+int Collidable::getWidth()
+{
+    return _width;
+}
+
+
 // --------------------Character Functions---------------------------
-Character::Character (std::string filepath)
+Character::Character (std::string filepath) :
+    Collidable(this->getLocalBounds().height,this->getLocalBounds().width)
 {
     addEntity();
     if (!_texture.loadFromFile(filepath)) {
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
-
-    //charList.push_back(*this);
 }
 
-Character::Character (const int x, const int y, const std::string filepath)
-    : Entity::Entity(x,y)
+Character::Character (const int x, const int y, const std::string filepath) :
+    Entity::Entity(x,y),
+    Collidable(this->getLocalBounds().height,this->getLocalBounds().width)
+
 {
     if (!_texture.loadFromFile(filepath)) {
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
-    this->setPosition(sf::Vector2f(x,y));
+    this->sf::Sprite::setPosition(sf::Vector2f(x,y));
 
     //charList.push_back(*this);
 }
@@ -62,7 +109,17 @@ void Character::updateChar() {
     double moveFactor = 50;
     double g = 980;
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+    {
+        moveFactor = 100; //sprinting
+    }
+
+
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) // stop movement if left and right
+    {
+        setxVel(0);
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) // move left
     {
         if (getxVel() < -moveValue*moveFactor)
         {
@@ -73,7 +130,7 @@ void Character::updateChar() {
             setxVel(getxVel()-moveValue);
         }
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) //move right
     {
         if (getxVel() > moveValue*moveFactor)
         {
@@ -86,8 +143,9 @@ void Character::updateChar() {
     }
     else { setxVel(0); }
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (oneTap > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) // jump
     {
+        oneTap--;
         setyVel(-500);
     }
 //    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
@@ -97,12 +155,14 @@ void Character::updateChar() {
     else {
         setyVel(getyVel()+g*timeInc);
 
-        if (this->getPosition().y > desktop.height/1.5 - 150) {
+        if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) { // this may need to be edited to make collision boxes work,
+            if(oneTap<65)
+                oneTap++;
             setyVel(0);
         }
     }
 
-    this->move(getxVel()*timeInc,getyVel()*timeInc);
+    this->sf::Sprite::move(getxVel()*timeInc,getyVel()*timeInc);
 
     time = Clock::clock.restart();
 }
@@ -110,7 +170,7 @@ void Character::updateChar() {
 void Character::transpose(const int &x, const int &y) {
     setxPos(x+getxPos());
     setyPos(y+getyPos());
-    this->setPosition(getxPos(), getyPos());
+    this->sf::Sprite::setPosition(getxPos(), getyPos());
 }
 
 // --------------------Background Functions---------------------------
