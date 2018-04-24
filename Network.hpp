@@ -66,6 +66,7 @@ public:
 
 protected:
     vector<sf::TcpSocket> goodClients;
+    sf::TcpSocket client;
     sf::TcpListener listener;
     sf::Int32 greatestClient = 1;
 };

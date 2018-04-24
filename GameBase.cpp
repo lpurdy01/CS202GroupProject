@@ -32,8 +32,20 @@ CollisionGrid::~CollisionGrid()
 }
 
 // -------------------Collidable Functions---------------------------
+vector<Collidable*> Collidable::collideVec = {};
+
 Collidable::Collidable(const float height, const float width) : _height(height), _width(width)
 {
+    _position.x1 = this->getPosition().x;
+    _position.x2 = this->getPosition().x + (float)getWidth();
+    _position.y1 = this->getPosition().y;
+    _position.y2 = this->getPosition().y + (float)getHeight();
+}
+
+Collidable::Collidable(const float x, const float y, const float height, const float width) :
+    _height(height), _width(width)
+{
+    this->setPosition(x, y);
     _position.x1 = this->getPosition().x;
     _position.x2 = this->getPosition().x + (float)getWidth();
     _position.y1 = this->getPosition().y;
@@ -45,9 +57,20 @@ Collidable::~Collidable ()
 
 }
 
-void Collidable::updateGrid(const float x1, const float x2, const float y1, const float y2)
+void Collidable::setGrid(const float x1, const float x2, const float y1, const float y2)
 {
+    _position.x1 = x1;
+    _position.x2 = x2;
+    _position.y1 = y1;
+    _position.y2 = y2;
+}
 
+void Collidable::updateGrid(const float x, const float y)
+{
+    _position.x1 = this->getGrid().x1 + x;
+    _position.x2 = this->getGrid().x2 + x;
+    _position.y1 = this->getGrid().y1 + y;
+    _position.y2 = this->getGrid().y2 + y;
 }
 
 CollisionGrid Collidable::getGrid()
@@ -65,7 +88,6 @@ int Collidable::getWidth()
     return _width;
 }
 
-
 // --------------------Character Functions---------------------------
 Character::Character (std::string filepath) :
     Collidable(this->getLocalBounds().height,this->getLocalBounds().width)
@@ -75,6 +97,9 @@ Character::Character (std::string filepath) :
         //return EXIT_FAILURE;
     }
     this->setTexture(_texture);
+    this->setGrid(0,this->getLocalBounds().width,0,this->getLocalBounds().height);
+    
+    collideVec.push_back(this);
 }
 
 Character::Character (const int x, const int y, const std::string filepath) :
@@ -161,10 +186,91 @@ void Character::updateChar() {
             setyVel(0);
         }
     }
-
+    
     this->sf::Sprite::move(getxVel()*timeInc,getyVel()*timeInc);
+    this->updateGrid(getxVel()*timeInc,getyVel()*timeInc);
+
+    while (collideCheck())
+    {
+        if (this->collideY())
+        {
+            this->sf::Sprite::move(0,-getyVel()*timeInc);
+            this->setyVel(0);
+            this->updateGrid(0,-getyVel()*timeInc);
+        }
+        
+        if (this->collideX())
+        {
+            this->sf::Sprite::move(-getxVel()*timeInc,0);
+            this->setxVel(0);
+            this->updateGrid(-getxVel()*timeInc,0);
+        }
+    }
+    
+    std::cout << "Guy: x1: " << this->getGrid().x1 << ", x2: " << this->getGrid().x2 << ", y1: " << this->getGrid().y1 << ", y2: " << this->getGrid().y2 << std::endl;
 
     time = Clock::clock.restart();
+}
+
+bool Character::collideCheck()
+{
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        
+        if ((this->getGrid().x2 >= object->getGrid().x1 && this->getGrid().x2 <= object->getGrid().x2)
+            ||
+            (this->getGrid().x1 >= object->getGrid().x1 && this->getGrid().x1 <= object->getGrid().x2))
+        {
+            if((this->getGrid().y1 <= object->getGrid().y2 && this->getGrid().y1 >= object->getGrid().y1)
+               ||
+               (this->getGrid().y2 <= object->getGrid().y2 && this->getGrid().y2 >= object->getGrid().y1))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Character::collideX()
+{
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        
+        if ((this->getGrid().x2 >= object->getGrid().x1 && this->getGrid().x2 <= object->getGrid().x2)
+            ||
+            (this->getGrid().x1 >= object->getGrid().x1 && this->getGrid().x1 <= object->getGrid().x2))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Character::collideY()
+{
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        if((this->getGrid().y1 <= object->getGrid().y2 && this->getGrid().y1 >= object->getGrid().y1)
+           ||
+           (this->getGrid().y2 <= object->getGrid().y2 && this->getGrid().y2 >= object->getGrid().y1))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 void Character::transpose(const int &x, const int &y) {
@@ -182,3 +288,18 @@ Background::Background (const std::string filepath) {
 }
 
 Background::~Background() { deleteEntity(); }
+
+// -----------------------Block Functions-----------------------------
+Block::Block (const int x, const int y, const int width, const int height) :
+    Collidable(x, y, height, width)
+{
+    this->setSize(sf::Vector2f(width, height));
+    this->sf::Shape::setPosition(x, y);
+    
+    collideVec.push_back(this);
+}
+
+Block::~Block()
+{
+    
+}

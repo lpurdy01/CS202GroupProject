@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 using std::vector;
+#include <list>
+using std::list;
 
 // -----------------------Clock Class------------------------------
 class Clock : public sf::Clock
@@ -46,7 +48,7 @@ public:
     CollisionGrid(float x1, float x2, float y1, float y2);
 
     ~CollisionGrid();
-
+    
     float x1;
     float x2;
     float y1;
@@ -57,14 +59,18 @@ public:
 class Collidable : public sf::Transformable {
 public:
     Collidable(const float height, const float width);
+    Collidable(const float x, const float y, const float height, const float width);
     ~Collidable();
 
-    void updateGrid(const float x1, const float x2, const float y1, const float y2);
+    void setGrid(const float x1, const float x2, const float y1, const float y2);
+    void updateGrid(const float x, const float y);
 
     CollisionGrid getGrid();
 
     int getHeight();
     int getWidth();
+    
+    static vector<Collidable*> collideVec;
 private:
     const int _height;
     const int _width;
@@ -88,6 +94,10 @@ public:
     void setID(int ID) {_ID = ID;}
 
     void updateChar();
+    
+    bool collideCheck();
+    bool collideX();
+    bool collideY();
 
     void transpose(const int &xVal, const int &yVal);
 private:
@@ -111,9 +121,12 @@ private:
 };
 
 // -------------------------Block Class------------------------------
-class Block : public Entity, public sf::Shape
+class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
+    Block (const int x, const int y, const int width, const int height);
+    
+    ~Block();
 private:
 };
 

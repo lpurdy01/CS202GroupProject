@@ -70,8 +70,11 @@ void runGame (NetworkClient & serverConnection)
 
     Character guy("Drawing.png");
     guy.sf::Sprite::setScale(.25, .25);
-    std::cout << "width: " << guy.getLocalBounds().width << "  height: " << guy.getLocalBounds().height << std::endl;
+    guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
+    
+    Block block1(500,windowHeight-100,100,100);
+    block1.setFillColor(sf::Color::Black);
 
   //  Background bg("cute_image.jpg");
    // bg.setScale(2,2);
@@ -91,10 +94,13 @@ void runGame (NetworkClient & serverConnection)
         window.clear();
         window.draw(bg);
         window.draw(guy);
+        window.draw(block1);
 
         sf::Event event;
 
         guy.updateChar();
+        std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
+        
         clientSyncLock.unlock(); //Allows Threads to edit Variables
 
         while (window.pollEvent(event))
