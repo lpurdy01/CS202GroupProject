@@ -73,7 +73,10 @@ void runGame (NetworkClient & serverConnection)
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
     
-    Block block1(500,windowHeight-100,100,100);
+    Block ground(0,windowHeight-100,windowWidth,100);
+    ground.setFillColor(sf::Color::Black);
+    
+    Block block1(500,windowHeight-200,100,100);
     block1.setFillColor(sf::Color::Black);
 
   //  Background bg("cute_image.jpg");
@@ -93,13 +96,14 @@ void runGame (NetworkClient & serverConnection)
         //Place any variable manipulation here
         window.clear();
         window.draw(bg);
+        window.draw(ground);
         window.draw(guy);
         window.draw(block1);
 
         sf::Event event;
 
         guy.updateChar();
-        std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
+        //std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
         
         clientSyncLock.unlock(); //Allows Threads to edit Variables
 

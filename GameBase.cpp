@@ -20,7 +20,7 @@ void Entity::setyPos(int yPos) { _yPos = yPos; }
 int Entity::getxPos() { return _xPos; }
 int Entity::getyPos() { return _yPos; }
 
-// --------------------Collision Functions---------------------------
+// ------------------CollisionGrid Functions-------------------------
 CollisionGrid::CollisionGrid()
 {
 
@@ -168,46 +168,46 @@ void Character::updateChar() {
     }
     else { setxVel(0); }
 
-    if (oneTap > 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) // jump
+    if (numJumps == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) // jump
     {
-        oneTap--;
+        numJumps--;
         setyVel(-500);
     }
-//    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-//    {
-//        setyVel(getyVel()+moveValue);
-//    }
-    else {
+    
+    if (numJumps == 1 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    {
+        secondJump = true;
+    }
+    
+    if (numJumps == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && secondJump)
+    {
+        secondJump = false;
+        numJumps--;
+        setyVel(-500);
+    }
+        
+    else
+    {
         setyVel(getyVel()+g*timeInc);
-
-        if (this->sf::Sprite::getPosition().y > desktop.height/1.5 - 150) { // this may need to be edited to make collision boxes work,
-            if(oneTap<65)
-                oneTap++;
-            setyVel(0);
-        }
+    }
+    
+    if (collideY(getyVel()*timeInc))
+    {
+        numJumps = 2;
+        secondJump = false;
+        setyVel(0);
+        //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    }
+    
+    if (collideX(getxVel()*timeInc))
+    {
+        setxVel(0);
     }
     
     this->sf::Sprite::move(getxVel()*timeInc,getyVel()*timeInc);
     this->updateGrid(getxVel()*timeInc,getyVel()*timeInc);
-
-    while (collideCheck())
-    {
-        if (this->collideY())
-        {
-            this->sf::Sprite::move(0,-getyVel()*timeInc);
-            this->setyVel(0);
-            this->updateGrid(0,-getyVel()*timeInc);
-        }
-        
-        if (this->collideX())
-        {
-            this->sf::Sprite::move(-getxVel()*timeInc,0);
-            this->setxVel(0);
-            this->updateGrid(-getxVel()*timeInc,0);
-        }
-    }
     
-    std::cout << "Guy: x1: " << this->getGrid().x1 << ", x2: " << this->getGrid().x2 << ", y1: " << this->getGrid().y1 << ", y2: " << this->getGrid().y2 << std::endl;
+    //std::cout << "Guy: x1: " << this->getGrid().x1 << ", x2: " << this->getGrid().x2 << ", y1: " << this->getGrid().y1 << ", y2: " << this->getGrid().y2 << std::endl;
 
     time = Clock::clock.restart();
 }
@@ -236,7 +236,73 @@ bool Character::collideCheck()
     return false;
 }
 
-bool Character::collideX()
+bool Character::collideX(float moveVal)
+{
+    float x1 = this->getGrid().x1 + moveVal;
+    float x2 = this->getGrid().x2 + moveVal;
+    float y1 = this->getGrid().y1;
+    float y2 = this->getGrid().y2;
+    
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        if(
+            (
+             (x1 >= object->getGrid().x1 && x1 <= object->getGrid().x2)
+              ||
+             (x2 >= object->getGrid().x1 && x2 <= object->getGrid().x2)
+            )
+             &&
+            (
+             (y1 >= object->getGrid().y1 && y1 <= object->getGrid().y2)
+             ||
+             (y2 >= object->getGrid().y1 && y2 <= object->getGrid().y2)
+            )
+          )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Character::collideY(float moveVal)
+{
+    float y1 = this->getGrid().y1 + moveVal;
+    float y2 = this->getGrid().y2 + moveVal;
+    float x1 = this->getGrid().x1;
+    float x2 = this->getGrid().x2;
+    
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        if(
+            (
+              (y1 <= object->getGrid().y2 && y1 >= object->getGrid().y1)
+               ||
+              (y2 <= object->getGrid().y2 && y2 >= object->getGrid().y1)
+            )
+             &&
+            (
+              (x1 >= object->getGrid().x1 && x1 <= object->getGrid().x2)
+               ||
+              (x2 >= object->getGrid().x1 && x2 <= object->getGrid().x2)
+            )
+          )
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Character::collideLeft()
 {
     for (auto &object : collideVec)
     {
@@ -246,16 +312,37 @@ bool Character::collideX()
         }
         
         if ((this->getGrid().x2 >= object->getGrid().x1 && this->getGrid().x2 <= object->getGrid().x2)
-            ||
-            (this->getGrid().x1 >= object->getGrid().x1 && this->getGrid().x1 <= object->getGrid().x2))
+            &&
+            (this->getGrid().x1 <= object->getGrid().x1 || this->getGrid().x1 >= object->getGrid().x2))
         {
+            std::cout << "Collision from Left." << std::endl;
             return true;
         }
     }
     return false;
 }
 
-bool Character::collideY()
+bool Character::collideRight()
+{
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        
+        if ((this->getGrid().x2 <= object->getGrid().x1 || this->getGrid().x2 >= object->getGrid().x2)
+            &&
+            (this->getGrid().x1 >= object->getGrid().x1 && this->getGrid().x1 <= object->getGrid().x2))
+        {
+            std::cout << "Collision from Right." << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Character::collideTop()
 {
     for (auto &object : collideVec)
     {
@@ -264,9 +351,32 @@ bool Character::collideY()
             continue;
         }
         if((this->getGrid().y1 <= object->getGrid().y2 && this->getGrid().y1 >= object->getGrid().y1)
-           ||
-           (this->getGrid().y2 <= object->getGrid().y2 && this->getGrid().y2 >= object->getGrid().y1))
+           &&
+           (this->getGrid().y2 >= object->getGrid().y2 || this->getGrid().y2 <= object->getGrid().y1))
         {
+            std::cout << "Collision from Top." << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Character::collideBottom()
+{
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        if
+        (
+         //(this->getGrid().y1 >= object->getGrid().y2 || this->getGrid().y1 <= object->getGrid().y1)
+           //&&
+         (this->getGrid().y2 >= object->getGrid().y1 && this->getGrid().y2 <= object->getGrid().y1+1)
+        )
+        {
+            std::cout << "Collision from bottom." << std::endl;
             return true;
         }
     }

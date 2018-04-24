@@ -40,7 +40,7 @@ private:
     int _yPos;
 };
 
-// ----------------------Collision Class----------------------------
+// -------------------CollisionGrid Class--------------------------
 class CollisionGrid : public sf::Vector2f {
 public:
     CollisionGrid();
@@ -96,15 +96,20 @@ public:
     void updateChar();
     
     bool collideCheck();
-    bool collideX();
-    bool collideY();
+    bool collideX(float moveVal);
+    bool collideY(float moveVal);
+    bool collideLeft();
+    bool collideRight();
+    bool collideTop();
+    bool collideBottom();
 
     void transpose(const int &xVal, const int &yVal);
 private:
     sf::Texture _texture;
     static vector<Character> charList;
 
-    int oneTap = 0;
+    int numJumps = 0;
+    bool secondJump = false;
     double _xVel = 0;
     double _yVel = 0;
     sf::Uint8 _ID= 0;
