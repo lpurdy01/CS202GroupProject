@@ -79,10 +79,10 @@ void runGame (NetworkClient & serverConnection)
     Block block1(500,windowHeight-200,100,100);
     block1.setFillColor(sf::Color::Black);
 
-  //  Background bg("cute_image.jpg");
-   // bg.setScale(2,2);
-    sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
-    bg.setFillColor(sf::Color::White);
+    Background bg("cute_image.jpg");
+    bg.setScale(2,2);
+   // sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
+    //bg.setFillColor(sf::Color::White);
 
     sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock]()
     {
