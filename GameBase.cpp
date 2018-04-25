@@ -113,7 +113,9 @@ Character::Character (const int x, const int y, const std::string filepath) :
     this->setTexture(_texture);
     this->sf::Sprite::setPosition(sf::Vector2f(x,y));
 
-    //charList.push_back(*this);
+    this->setGrid(x,x+this->getLocalBounds().width,y,y+this->getLocalBounds().height);
+    
+    collideVec.push_back(this);
 }
 
 Character::~Character() { deleteEntity(); }
@@ -170,6 +172,7 @@ void Character::updateChar() {
 
     if (numJumps == 2 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) // jump
     {
+        if (getyVel() != 0) { numJumps--; }
         numJumps--;
         setyVel(-500);
     }

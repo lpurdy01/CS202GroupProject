@@ -62,8 +62,6 @@ void runGame (NetworkClient & serverConnection)
     int windowHeight = desktop.height/1.5;
     int windowWidth = desktop.width/1.5;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "TESTING!");
-    //sf::CircleShape shape(50);
-    //shape.setFillColor(sf::Color::Yellow);
 
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
@@ -73,16 +71,16 @@ void runGame (NetworkClient & serverConnection)
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
     
-    Block ground(0,windowHeight-100,windowWidth,100);
+    Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
     ground.setFillColor(sf::Color::Black);
     
-    Block block1(500,windowHeight-200,100,100);
+    Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
     block1.setFillColor(sf::Color::Black);
 
-    Background bg("cute_image.jpg");
-    bg.setScale(2,2);
-   // sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
-    //bg.setFillColor(sf::Color::White);
+    //Background bg("cute_image.jpg");
+    //bg.setScale(2,2);
+    sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
+    bg.setFillColor(sf::Color::White);
 
     sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock]()
     {
