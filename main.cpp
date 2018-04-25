@@ -102,7 +102,7 @@ void runGame (NetworkClient & serverConnection)
 
         guy.updateChar();
         //std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
-        
+
         clientSyncLock.unlock(); //Allows Threads to edit Variables
 
         while (window.pollEvent(event))
