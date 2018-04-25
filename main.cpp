@@ -72,10 +72,10 @@ void runGame (NetworkClient & serverConnection)
     guy.sf::Sprite::setScale(.25, .25);
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
-    
+
     Block ground(0,windowHeight-100,windowWidth,100);
     ground.setFillColor(sf::Color::Black);
-    
+
     Block block1(500,windowHeight-200,100,100);
     block1.setFillColor(sf::Color::Black);
 
@@ -104,7 +104,7 @@ void runGame (NetworkClient & serverConnection)
 
         guy.updateChar();
         //std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
-        
+
         clientSyncLock.unlock(); //Allows Threads to edit Variables
 
         while (window.pollEvent(event))
