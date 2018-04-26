@@ -334,7 +334,8 @@ void runGame (NetworkClient & serverConnection)
 
         window.clear();
         window.draw(bg);
-
+//throw this stuff into a function, then we can have a switch statement to get what level they want to play on.
+//then we can have more than one level - sending that data over network could be a challenge though
         window.draw(edge1);
         window.draw(edge2);
         window.draw(edge3);
