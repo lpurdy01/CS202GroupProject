@@ -31,10 +31,6 @@ public:
 
     static void addEntity();
     static void deleteEntity();
-    void setxPos(int xPos);
-    void setyPos(int yPos);
-    sf::Int32 getxPos();
-    sf::Int32 getyPos();
 
 private:
     static int numEntities;
@@ -50,7 +46,7 @@ public:
     CollisionGrid(float x1, float x2, float y1, float y2);
 
     ~CollisionGrid();
-    
+
     float x1;
     float x2;
     float y1;
@@ -61,21 +57,21 @@ public:
 class Collidable : public sf::Transformable {
 public:
     enum Condition { REGULAR, DEATH, GOAL };
-    
+
     Collidable(const float height, const float width, const Condition condition = Collidable::REGULAR);
     Collidable(const float x, const float y, const float height, const float width, const Condition condition = Collidable::REGULAR);
     ~Collidable();
 
     void setGrid(const float x1, const float x2, const float y1, const float y2);
     void updateGrid(const float x, const float y);
-    
+
     string getCondition();
-    
+
     CollisionGrid getGrid();
 
     int getHeight();
     int getWidth();
-    
+
     static vector<Collidable*> collideVec;
 private:
     const int _height;
@@ -101,7 +97,7 @@ public:
     void setID(int ID) {_ID = ID;}
 
     void updateChar();
-    
+
     bool collideCheck();
     bool collideX(float moveVal);
     bool collideY(float moveVal);
@@ -110,17 +106,25 @@ public:
     bool collideTop();
     bool collideBottom();
 
+    void setxPos(int xPos);
+    void setyPos(int yPos);
+    sf::Int32 getxPos();
+    sf::Int32 getyPos();
+
     void transpose(const int &xVal, const int &yVal);
 
 	bool checkIfDead();
 	void setIfDead(bool dead);
-    
+
     bool checkIfWin();
     void setIfWin(bool win);
 
 private:
     sf::Texture _texture;
     static vector<Character> charList;
+
+    int _xPos;
+    int _yPos;
 
     int numJumps = 0;
     bool secondJump = false;
@@ -146,9 +150,9 @@ class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
     Block (const int x, const int y, const int width, const int height, const Condition condition = Collidable::REGULAR);
-    
+
     void deathBlock();
-    
+
     ~Block();
 private:
 };

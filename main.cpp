@@ -7,6 +7,10 @@
 #include "ResourceFunctions.hpp"
 #include "Network.hpp"
 
+#define serverDebug 0
+#define clientRecieveDebug 1
+
+
 
 void runServer()
 {
@@ -15,41 +19,104 @@ void runServer()
     cout << "IP Address: " << ipLocal << endl;
     NetworkServer server;
     server.prepare();
+    sf::Clock clock;
+    vector<Character> serverCharacters;
     while(true)
     {
         sf::Uint8 packType = 0;
         NetworkPackage datapack;
-        datapack = server.recieveNet();
-        //cout << "Recieved Datapack" << endl;
-        datapack >> packType;
-        if(packType == CharacterPacket)
+        if(server.recieve(datapack))
         {
-            vector<Character> decodedChars = datapack.decodeCharacters();
-            for(Character i:decodedChars)
+            //cout << "Recieved Datapack" << endl;
+            datapack >> packType;
+            if(packType == CharacterPacket)
             {
-                //cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                vector<Character> decodedChars = datapack.decodeCharacters();
+                server.updateCharactersVector(serverCharacters,decodedChars);
+                #if(serverDebug)
+            cout << "Number of Characters in Array: " << serverCharacters.size() << endl;
+#endif
+#if(serverDebug)
+                for(Character & i:decodedChars)
+                {
+                    cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                }
+#endif
+            }
+            if(packType == SquakPacket)
+            {
+                cout << "Recieved ID Request... This is a problem" << endl;
             }
         }
-        if(packType == SquakPacket)
+        if(clock.getElapsedTime() > sf::milliseconds(20))
         {
-            cout << "Recieved ID Request" << endl;
-            server.handleClientSquak(datapack);
-            cout << "Gave Client ID: " << (server.getGreatestClient() - 1) << endl;
+            server.acceptClient(false);
+
+            if(serverCharacters.size())
+            {
+                #if(serverDebug)
+                for(Character & i:serverCharacters)
+                {
+                    cout << "Character to send ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                }
+                #endif
+                server.sendCharacters(serverCharacters);
+#if(serverDebug)
+                cout << "Sending Characters" << endl;
+
+#endif
+            }
+            clock.restart();
         }
     }
 }
 
-void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf::Mutex & clientSyncLock)
+void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf::Mutex & clientSyncLock, vector<Character> & otherCharacters)
 {
+    sf::Clock clientclocksend;
+    sf::Clock clientclockrecieve;
     while(true)
     {
-        NetworkPackage pack;
-        clientSyncLock.lock();
-        pack.encodeCharacter(mainCharacter);
-        clientSyncLock.unlock();
-        pack.composePackage();
-        serverConnection.send(pack);
-        sf::sleep(sf::milliseconds(100));
+        if(clientclocksend.getElapsedTime() > sf::milliseconds(100))
+        {
+
+
+            NetworkPackage pack;
+            clientSyncLock.lock();
+            pack.encodeCharacter(mainCharacter);
+            pack.composePackage();
+            serverConnection.send(pack);
+            clientSyncLock.unlock();
+            clientclocksend.restart();
+        }
+        if(clientclockrecieve.getElapsedTime() > sf::milliseconds(150))
+        {
+
+
+            sf::Uint8 packType = 0;
+            sf::Packet clientdatapack;
+            if(serverConnection.recieve(clientdatapack))
+            {
+                NetworkPackage clientNetworkPackage;
+                clientNetworkPackage.append(clientdatapack.getData(),clientdatapack.getDataSize());
+                clientNetworkPackage >> packType;
+                if(packType == CharacterPacket)
+                {
+                    vector<Character> decodedChars = clientNetworkPackage.decodeCharacters();
+
+                    clientSyncLock.lock();
+                    serverConnection.updateCharactersVector(otherCharacters, decodedChars);
+                    clientSyncLock.unlock();
+#if(clientRecieveDebug)
+                    cout << "Recieved Character Package From Server" << endl;
+                    for(auto & i:decodedChars)
+                    {
+                        cout << "Client Side: ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                    }
+#endif
+                }
+            }
+        }
     }
 }
 
@@ -57,6 +124,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
 void runGame (NetworkClient & serverConnection)
 {
     sf::Mutex clientSyncLock;
+    vector<Character> otherCharacters;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
     float windowHeight = 768;
@@ -71,9 +139,10 @@ void runGame (NetworkClient & serverConnection)
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
 
+
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
     ground.setFillColor(sf::Color::Black);
-    
+
     Block leftBound(-2,0,1,windowHeight);
     Block rightBound(windowWidth+1,0,1,windowHeight);
 
@@ -86,14 +155,12 @@ void runGame (NetworkClient & serverConnection)
     Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::GOAL);
 	block3.setFillColor(sf::Color::Yellow);
 
-    //Background bg("cute_image.jpg");
-    //bg.setScale(2,2);
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
 
-    sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock]()
+    sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock, & otherCharacters]()
     {
-        clientSync(serverConnection, guy, clientSyncLock);
+        clientSync(serverConnection, guy, clientSyncLock, otherCharacters);
     });
     clientSnc.launch();
 
@@ -102,7 +169,7 @@ void runGame (NetworkClient & serverConnection)
         clientSyncLock.lock(); //Stops Threads from editing variables
         //Place any variable manipulation here
 
-		window.clear();
+        window.clear();
         window.draw(bg);
         window.draw(ground);
         window.draw(guy);

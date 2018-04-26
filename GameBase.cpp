@@ -15,12 +15,8 @@ Entity::~Entity() { deleteEntity(); }
 void Entity::addEntity() { numEntities++; }
 void Entity::deleteEntity() { numEntities--; }
 
-void Entity::setxPos(int xPos) { _xPos = xPos; }
-void Entity::setyPos(int yPos) { _yPos = yPos; }
-int Entity::getxPos() { return _xPos; }
-int Entity::getyPos() { return _yPos; }
+// --------------------Collision Functions---------------------------
 
-// ------------------CollisionGrid Functions-------------------------
 CollisionGrid::CollisionGrid()
 {
 
@@ -229,6 +225,20 @@ void Character::updateChar() {
     time = Clock::clock.restart();
 }
 
+
+void Character::setxPos(int xPos)
+{
+    this->sf::Sprite::setPosition(xPos, this->getyPos());
+    _xPos = xPos;
+}
+void Character::setyPos(int yPos)
+{
+    this->sf::Sprite::setPosition(this->getxPos(),yPos);
+    _yPos = yPos;
+}
+int Character::getxPos() { return _xPos; }
+int Character::getyPos() { return _yPos; }
+
 bool Character::collideX(float moveVal)
 {
     float x1 = this->getGrid().x1 + moveVal;
@@ -310,6 +320,7 @@ bool Character::collideY(float moveVal)
     }
     return false;
 }
+
 
 void Character::transpose(const int &x, const int &y) {
     setxPos(x+getxPos());
