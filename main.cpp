@@ -166,6 +166,7 @@ void runGame (NetworkClient & serverConnection)
     guy.setID(clientID);
     cout << "Guy ID: " << (int)(guy.getID()) << endl;
     
+    int numChars = 0;
     vector<Character> charVec;
 
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
@@ -208,33 +209,31 @@ void runGame (NetworkClient & serverConnection)
 //        {
 //            wait = false;
 //        }
-        if (refreshTime.getElapsedTime() > sf::milliseconds(20))
+        if (otherCharacters.size() > numChars)
         {
-            serverConnection.updateCharactersVector(charVec, otherCharacters);
-            refreshTime.restart();
+            for (int i = 0; i < otherCharacters.size(); i++)
+            {
+                std::cout << "updating characters" << endl;
+                serverConnection.updateCharactersVector(charVec, otherCharacters);
+                charVec[i].sf::Sprite::setScale(.25, .25);
+                numChars++;
+            }
         }
         
-        if (scaleTime.getElapsedTime() > sf::milliseconds(5000))
-        {
-            for(int i = 0; i < charVec.size(); i++)
-            {
-                charVec[i].sf::Sprite::setScale(.25, .25);
-            }
-            scaleTime.restart();
-        }
-
         window.clear();
         window.draw(bg);
         window.draw(ground);
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
+
         for(int i = 0; i < charVec.size(); i++)
         {
-            charVec[i].sf::Sprite::setScale(.25, .25);
+            charVec[i].sf::Sprite::move(
+                                        otherCharacters[i].sf::Sprite::getPosition().x - charVec[i].sf::Sprite::getPosition().x,
+                                        otherCharacters[i].sf::Sprite::getPosition().y - charVec[i].sf::Sprite::getPosition().y);
             window.draw(charVec[i]);
         }
-
         window.draw(guy);
 
         guy.updateChar();
