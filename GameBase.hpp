@@ -60,13 +60,17 @@ public:
 // ----------------------Collidable Class--------------------------
 class Collidable : public sf::Transformable {
 public:
-    Collidable(const float height, const float width);
-    Collidable(const float x, const float y, const float height, const float width);
+    enum Condition { REGULAR, DEATH, GOAL };
+    
+    Collidable(const float height, const float width, const Condition condition = Collidable::REGULAR);
+    Collidable(const float x, const float y, const float height, const float width, const Condition condition = Collidable::REGULAR);
     ~Collidable();
 
     void setGrid(const float x1, const float x2, const float y1, const float y2);
     void updateGrid(const float x, const float y);
-
+    
+    string getCondition();
+    
     CollisionGrid getGrid();
 
     int getHeight();
@@ -77,6 +81,7 @@ private:
     const int _height;
     const int _width;
     CollisionGrid _position;
+    Condition _condition;
 };
 
 // ----------------------Character Class----------------------------
@@ -136,14 +141,12 @@ private:
 class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
-    Block (const int x, const int y, const int width, const int height, const string condition = "Regular");
+    Block (const int x, const int y, const int width, const int height, const Condition condition = Collidable::REGULAR);
     
-    enum Condition { REGULAR, DEATH, GOAL };
     void deathBlock();
     
     ~Block();
 private:
-    Condition condition;
 };
 
 #endif /* GAMEBASE_HPP_INCLUDED */
