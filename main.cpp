@@ -48,7 +48,7 @@ void runServer()
                 cout << "Recieved ID Request... This is a problem" << endl;
             }
         }
-        if(clock.getElapsedTime() > sf::milliseconds(20))
+        if(clock.getElapsedTime() > sf::milliseconds(80))
         {
             server.acceptClient(false);
 
@@ -97,6 +97,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
             sf::Packet clientdatapack;
             if(serverConnection.recieve(clientdatapack))
             {
+
                 NetworkPackage clientNetworkPackage;
                 clientNetworkPackage.append(clientdatapack.getData(),clientdatapack.getDataSize());
                 clientNetworkPackage >> packType;
@@ -104,9 +105,10 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
                 {
                     vector<Character> decodedChars = clientNetworkPackage.decodeCharacters();
 
-                    clientSyncLock.lock();
+                    //clientSyncLock.lock();
                     serverConnection.updateCharactersVector(otherCharacters, decodedChars);
-                    clientSyncLock.unlock();
+                    //clientclockrecieve.restart();
+                    //clientSyncLock.unlock();
 #if(clientRecieveDebug)
                     cout << "Recieved Character Package From Server" << endl;
                     for(auto & i:otherCharacters)
@@ -116,6 +118,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
 #endif
                 }
             }
+
         }
     }
 }
@@ -214,7 +217,7 @@ void runGame (NetworkClient & serverConnection)
         }
 
         window.draw(guy);
-        
+
         guy.updateChar();
 
         if (guy.checkIfDead())
