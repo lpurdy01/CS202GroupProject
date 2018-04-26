@@ -27,7 +27,7 @@ int NetworkClient::connect(string ip, int port)
     if (status != sf::Socket::Done)
     {
         cout << "Failed to Connect" << endl;
-        return 0;
+        return 1;
     }
     cout << "Connected" << endl;
     return 1;
