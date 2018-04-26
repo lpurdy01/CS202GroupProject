@@ -8,7 +8,7 @@
 #include "Network.hpp"
 
 #define serverDebug 0
-#define clientRecieveDebug 1
+#define clientRecieveDebug 0
 
 
 
@@ -130,7 +130,7 @@ void runGame (NetworkClient & serverConnection)
     float windowHeight = 768;
     float windowWidth = 1366;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
-    
+
     sf::Text deathText;
     sf::Font deathFont;
     deathFont.loadFromFile("comicbd.ttf");
@@ -139,7 +139,7 @@ void runGame (NetworkClient & serverConnection)
     deathText.setFillColor(sf::Color::White);
     deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
     deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
-    
+
 	sf::Font font;
 	font.loadFromFile("comicbd.ttf");
 
@@ -210,7 +210,7 @@ void runGame (NetworkClient & serverConnection)
         window.draw(guy);
 
         guy.updateChar();
-            
+
         if (guy.checkIfDead())
         {
             window.clear();
