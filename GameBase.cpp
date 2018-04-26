@@ -200,10 +200,12 @@ void Character::updateChar() {
 
     if (collideY(getyVel()*timeInc))
     {
-        numJumps = 2;
-        secondJump = false;
+        if(standing(getyVel()*timeInc))
+        {
+            numJumps = 2;
+            secondJump = false;
+        }
         setyVel(0);
-        //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     }
 
     if (collideX(getxVel()*timeInc))
@@ -254,9 +256,14 @@ bool Character::collideX(float moveVal)
             )
              &&
             (
-             (y1 >= object->getGrid().y1 && y1 <= object->getGrid().y2)
+             ((y1 >= object->getGrid().y1 && y1 <= object->getGrid().y2)
              ||
-             (y2 >= object->getGrid().y1 && y2 <= object->getGrid().y2)
+             (y2 >= object->getGrid().y1 && y2 <= object->getGrid().y2))
+             ||
+            ((object->getGrid().y1 >= y1 && object->getGrid().y1 <= y2)
+             ||
+             (object->getGrid().y2 >= y1 && object->getGrid().y2 <= y2)
+             )
             )
           )
         {
@@ -315,6 +322,36 @@ bool Character::collideY(float moveVal)
     return false;
 }
 
+bool Character::standing(float moveVal)
+{
+    float y1 = this->getGrid().y1 + moveVal;
+    float y2 = this->getGrid().y2 + moveVal;
+    float x1 = this->getGrid().x1;
+    float x2 = this->getGrid().x2;
+    
+    for (auto &object : collideVec)
+    {
+        if (this == object)
+        {
+            continue;
+        }
+        if(
+           (
+             (y2 <= object->getGrid().y2 && y2 >= object->getGrid().y1)
+             &&
+             (
+               (x1 >= object->getGrid().x1 && x1 <= object->getGrid().x2)
+                ||
+               (x2 >= object->getGrid().x1 && x2 <= object->getGrid().x2)
+             )
+           )
+          )
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
 void Character::transpose(const int &x, const int &y) {
     setxPos(x+getxPos());

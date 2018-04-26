@@ -142,16 +142,6 @@ void runGame (NetworkClient & serverConnection)
     
     sf::RenderWindow window(sf::VideoMode(winW, winH), "hElP Me!");
 
-    sf::Font font;
-    font.loadFromFile("comicbd.ttf");
-
-    sf::Text text;
-    text.setFont(font);
-    text.setPosition(200, 200);
-    text.setCharacterSize(50);
-    text.setFillColor(sf::Color::Yellow);
-    text.setString("This is our game!\n Press space to continue");
-
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
 
@@ -161,12 +151,14 @@ void runGame (NetworkClient & serverConnection)
     float charH = guy.getLocalBounds().height / 5;
     
     guy.sf::Sprite::setScale(charW/guy.getLocalBounds().width, charH/guy.getLocalBounds().height);
-    guy.sf::Sprite::setPosition(0, 29*inc - charH);
-    guy.setGrid(0, charW, 29*inc - charH, 29*inc);
+    
+    float spawnY = 30*inc - charH - stdBlock - 1;
+    guy.sf::Sprite::setPosition(0, spawnY);
+    guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
     
     sf::RectangleShape bg;
-    bg.setSize(sf::Vector2f(40*inc, 40*inc));
-    bg.setPosition(-2*inc, -2*inc);
+    bg.setSize(sf::Vector2f(50*inc, 50*inc));
+    bg.setPosition(-5*inc, -5*inc);
     bg.setFillColor(sf::Color::White);
     
     Block edge1(-stdBlock,20*inc,stdBlock,10*inc);
@@ -187,59 +179,92 @@ void runGame (NetworkClient & serverConnection)
     Block edge16(20*inc - stdBlock, 8*inc, stdBlock, 5*inc);
     Block edge17(20*inc-stdBlock, 8*inc - stdBlock, 6*inc, stdBlock);
     
-    Block block1(inc, 28*inc, 4*inc, inc);
-    Block block2(4*inc, 26*inc, 3*inc, inc);
+    Block block1(inc, 28*inc, 4*inc, stdBlock);
+    Block block2(4*inc, 27*inc - stdBlock, 3*inc, stdBlock);
     Block block3(inc, 23*inc, 3*inc, inc);
     Block block4(5*inc, 21*inc, inc, 4*inc);
     Block block5(6*inc, 19*inc, 3*inc, inc);
     Block block6(8*inc, 22*inc, 3*inc, inc);
-    Block block7(7*inc, 24*inc, inc, inc);
+    Block block7(7*inc, 24*inc + stdBlock, inc, stdBlock);
     Block block8(11*inc, 20*inc, inc, inc);
     Block block9(10*inc, 17*inc, inc, 2*inc);
     Block block10(6*inc, 16*inc+stdBlock, 3*inc, inc);
-    Block block11(6*inc, 14*inc, inc, inc);
+    Block block11(6*inc, 14*inc+stdBlock, inc, stdBlock);
     Block block12(5*inc, 13*inc, 1.5*inc, stdBlock);
     Block block13(6*inc, 11*inc, 2*inc, stdBlock);
     Block block14(5*inc, 9*inc, inc, inc);
     Block block15(7*inc, 8*inc, inc, inc);
     Block block16(5*inc, 6*inc, 2*inc, stdBlock);
     Block block17(7*inc, 4*inc, inc, inc);
-    Block block18(5*inc, 2*inc, 2*inc, inc);
+    Block block18(5*inc, 2*inc+stdBlock, 2*inc, stdBlock);
     Block block19(10*inc, 14*inc+stdBlock, inc, stdBlock);
-    Block block20(14*inc, 14*inc, 10*inc, inc);
+    Block block20(14*inc + stdBlock, 14*inc, 5*inc + stdBlock, inc);
     Block block21(23*inc, 12*inc, 2*inc, stdBlock);
     Block block22(20*inc, 11*inc, 2*inc, stdBlock);
     Block block23(23*inc, 10*inc+stdBlock, inc, stdBlock);
-    Block block24(20*inc, 9*inc, 4*inc, stdBlock);
+    Block block24(20*inc, 9*inc, 4*inc - stdBlock, stdBlock);
     Block block25(11*inc, 24*inc, inc, inc);
-    Block block26(3.5*inc, 24*inc, inc, inc);
+    Block block26(3.5*inc, 24*inc + stdBlock, inc, stdBlock);
+    Block block27(7*inc, 28*inc, inc, stdBlock);
+    Block block28(24*inc+stdBlock, 18*inc+stdBlock, stdBlock, stdBlock);
+    Block block29(0, 27*inc, stdBlock, inc);
+    Block block30(stdBlock, 27*inc + stdBlock, stdBlock, stdBlock);
+    Block block31(5*inc, 25*inc, stdBlock, inc + stdBlock);
+    Block block32(19*inc + stdBlock, 13*inc, stdBlock, inc);
+    Block block33(24*inc + stdBlock, 14*inc + stdBlock, stdBlock, inc);
+    Block block34(19*inc + stdBlock, 14*inc + stdBlock, 2*inc + stdBlock, stdBlock);
+    Block block35(23*inc + stdBlock, 16*inc + stdBlock, stdBlock, stdBlock);
+    Block block36(21*inc + stdBlock, 14*inc, stdBlock, stdBlock);
+    Block block37(20*inc + stdBlock, 12*inc + stdBlock, 2*inc + stdBlock, stdBlock);
     
     Block death1(6*inc, inc, 2*inc, stdBlock, Collidable::DEATH);
     Block death2(2*inc, 21*inc, inc, inc, Collidable::DEATH);
     Block death3(inc, 25*inc-stdBlock, 2*inc, 2*inc, Collidable::DEATH);
     Block death4(7*inc, 21*inc, 2*inc, stdBlock, Collidable::DEATH);
     Block death5(10*inc, 13*inc, inc, stdBlock, Collidable::DEATH);
-    Block death6(20*inc, 19*inc, 5*inc, inc, Collidable::DEATH);
+    Block death6(20*inc, 19*inc, 5*inc, stdBlock, Collidable::DEATH);
+    Block death7(0, 28*inc, inc, stdBlock, Collidable::DEATH);
+    Block death8(7*inc, 25*inc, inc, stdBlock, Collidable::DEATH);
+    Block death9(4*inc + stdBlock, 23*inc, stdBlock, stdBlock, Collidable::DEATH);
+    Block death10(5*inc, 20*inc, stdBlock, inc, Collidable::DEATH);
+    Block death11(8*inc, 25*inc - stdBlock, 3*inc, stdBlock, Collidable::DEATH);
+    Block death12(9*inc, 16*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
+    Block death13(10*inc + stdBlock, 15*inc, stdBlock, 2*inc, Collidable::DEATH);
+    Block death14(6*inc, 9*inc, stdBlock, inc, Collidable::DEATH);
+    Block death15(5*inc, 7*inc, 2*inc - stdBlock, stdBlock, Collidable::DEATH);
+    Block death16(13*inc, 15*inc, stdBlock, stdBlock, Collidable::DEATH);
+    Block death17(14*inc, 14*inc, stdBlock, inc + stdBlock, Collidable::DEATH);
+    Block death18(23*inc, 16*inc - stdBlock, stdBlock, inc + stdBlock, Collidable::DEATH);
+    Block death19(24*inc, 16*inc - stdBlock, stdBlock, inc + stdBlock, Collidable::DEATH);
+    Block death20(20*inc + stdBlock, 14*inc, inc, stdBlock, Collidable::DEATH);
+    Block death21(23*inc + stdBlock, 13*inc, inc + stdBlock, stdBlock, Collidable::DEATH);
+    Block death22(23*inc + stdBlock, 9*inc, stdBlock, stdBlock, Collidable::DEATH);
+    Block death23(23*inc, 9*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
     
     Block win1(21*inc, 8*inc, inc, stdBlock, Collidable::GOAL);
     
     sf::Text deathText;
-    sf::Font deathFont;
-    deathFont.loadFromFile("comicbd.ttf");
-    deathText.setFont(deathFont);
-    deathText.setCharacterSize(45);
+    sf::Font comicFont;
+    comicFont.loadFromFile("comicbd.ttf");
+    deathText.setFont(comicFont);
+    deathText.setCharacterSize(44);
     deathText.setFillColor(sf::Color::White);
-    deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
-    deathText.setPosition(-4*inc, 29*inc - charH);
+    deathText.setString("YOU HAVE DIED. PRESS ENTER TO TRY AGAIN");
+    deathText.setPosition(-4*inc, 30*inc - charH - stdBlock);
     
     sf::Text winText;
-    sf::Font winFont;
-    winFont.loadFromFile("comicbd.ttf");
-    winText.setFont(winFont);
+    winText.setFont(comicFont);
     winText.setCharacterSize(45);
     winText.setFillColor(sf::Color::White);
     winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
-    winText.setPosition(-3*inc, 29*inc - charH);
+    winText.setPosition(-3*inc, 30*inc - charH - stdBlock);
+    
+    sf::Text introText;
+    introText.setFont(comicFont);
+    introText.setCharacterSize(45);
+    introText.setFillColor(sf::Color::White);
+    introText.setString("      THIS IS OUR GAME!\nPRESS RETURN TO CONTINUE");
+    introText.setPosition(-3*inc, 30*inc - charH - stdBlock);
     
     view.setSize(winW/1.2, winH/1.2);
     
@@ -261,24 +286,23 @@ void runGame (NetworkClient & serverConnection)
     });
     clientSnc.launch();
 
-    bool wait = false;
-
     vector<Character> testChar;
 
     Character testyChar1(-55,0,"Drawing.png");
-    testyChar1.sf::Sprite::setScale(0.25,0.25);
+    testyChar1.sf::Sprite::setScale(0.2,0.2);
     testChar.push_back(testyChar1);
     Character testyChar2(-55,0,"Drawing.png");
-    testyChar2.sf::Sprite::setScale(0.25,0.25);
+    testyChar2.sf::Sprite::setScale(0.2,0.2);
     testChar.push_back(testyChar2);
     Character testyChar3(-55,0,"Drawing.png");
-    testyChar3.sf::Sprite::setScale(0.25,0.25);
+    testyChar3.sf::Sprite::setScale(0.2,0.2);
     testChar.push_back(testyChar3);
     Character testyChar4(-55,0,"Drawing.png");
-    testyChar4.sf::Sprite::setScale(0.25,0.25);
+    testyChar4.sf::Sprite::setScale(0.2,0.2);
     testChar.push_back(testyChar4);
 
 
+    bool startOfGame = true;
 
     while (window.isOpen())
     {
@@ -287,25 +311,11 @@ void runGame (NetworkClient & serverConnection)
 
 
         sf::Event event;
-        window.clear();
-        window.draw(text);
 
-//        if (event.type == sf::Event::KeyPressed)
-//        {
-//            wait = false;
-//        }
         if (otherCharacters.size() > numChars)
         {
             for (int i = 0; i < otherCharacters.size(); i++)
             {
-                std::cout << "updating characters" << endl;
-
-                //serverConnection.updateCharactersVector(charVec, otherCharacters);
-                //Character shadow(10,10,"Drawing.png");
-                //shadow.sf::Sprite::setScale(0.25,0.25);
-                //shadow.setID(numChars+1);
-                //charVec.push_back(shadow);
-                //charVec[i].sf::Sprite::setScale(.25, .25);
                 numChars++;
             }
         }
@@ -357,6 +367,17 @@ void runGame (NetworkClient & serverConnection)
         window.draw(block24);
         window.draw(block25);
         window.draw(block26);
+        window.draw(block27);
+        window.draw(block28);
+        window.draw(block29);
+        window.draw(block30);
+        window.draw(block31);
+        window.draw(block32);
+        window.draw(block33);
+        window.draw(block34);
+        window.draw(block35);
+        window.draw(block36);
+        window.draw(block37);
         
         window.draw(death1);
         window.draw(death2);
@@ -364,51 +385,38 @@ void runGame (NetworkClient & serverConnection)
         window.draw(death4);
         window.draw(death5);
         window.draw(death6);
+        window.draw(death7);
+        window.draw(death8);
+        window.draw(death9);
+        window.draw(death10);
+        window.draw(death11);
+        window.draw(death12);
+        window.draw(death13);
+        window.draw(death14);
+        window.draw(death15);
+        window.draw(death16);
+        window.draw(death17);
+        window.draw(death18);
+        window.draw(death19);
+        window.draw(death20);
+        window.draw(death21);
+        window.draw(death22);
+        window.draw(death23);
         
         window.draw(win1);
-        
-        /*
-        if(refreshTime.getElapsedTime() > sf::milliseconds(100))
-        {
-            for(int i = 0; i < charVec.size(); i++)
-            {
-                charVec[i].sf::Sprite::move(
-                    otherCharacters[i].sf::Sprite::getPosition().x - charVec[i].sf::Sprite::getPosition().x,
-                    otherCharacters[i].sf::Sprite::getPosition().y - charVec[i].sf::Sprite::getPosition().y);
-
-                window.draw(charVec[i]);
-            }
-            refreshTime.restart();
-        }
-
-        for(Character & i:charVec)
-        {
-            i.updateChar();
-            window.draw(i);
-        }*/
 
         if(refreshTime.getElapsedTime() > sf::milliseconds(20))
         {
-            //shadow.sf::Sprite::move(otherCharacters[0].sf::Sprite::getPosition().x,otherCharacters[0].sf::Sprite::getPosition().y);
-            //cout << otherCharacters.size() << endl;
             if(otherCharacters.size() >= 1)
             {
-                //cout << "Setting X pos: " << otherCharacters[0].getxPos() <<endl;
                 for(int i = 0; i < otherCharacters.size(); i++)
                 {
                     testChar[i].setxPos(otherCharacters[i].getxPos());
                     testChar[i].setyPos(otherCharacters[i].getyPos());
                 }
-
-                //cout << "Ypos: " << charVec[0].getyPos() << endl;
             }
             refreshTime.restart();
         }
-        //if(charVec.size()>= 1){
-        //cout << "Drawing Character from vector" << endl;
-        //window.draw(charVec[0]);
-        //cout << "Ypos: " << charVec[0].getyPos() << endl;
-        //}
         
         for(int i = 0; i < otherCharacters.size(); i++)
         {
@@ -417,20 +425,18 @@ void runGame (NetworkClient & serverConnection)
                 window.draw(testChar[i]);
             }
         }
-        
-        //window.draw(testChar[0]);
 
         window.draw(guy);
-
         guy.updateChar();
 
         if (guy.checkIfDead())
         {
             window.clear();
-            guy.sf::Sprite::setPosition(0, 29*inc - charH);
-            guy.setGrid(0, charW, 29*inc - charH, 29*inc);
+            guy.sf::Sprite::setPosition(0, spawnY);
+            guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
             view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
             window.setView(view);
+            
             window.draw(deathText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
@@ -441,29 +447,41 @@ void runGame (NetworkClient & serverConnection)
         if (guy.checkIfWin())
         {
             window.clear();
-            guy.sf::Sprite::setPosition(0, 29*inc - charH);
-            guy.setGrid(0, charW, 29*inc - charH, 29*inc);
+            guy.sf::Sprite::setPosition(0, spawnY);
+            guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
             view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
             window.setView(view);
+            
             window.draw(winText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
                 guy.setIfWin(0);
             }
         }
-
-        //clientSyncLock.unlock(); //Allows Threads to edit Variables
-
-        while (window.pollEvent(event))
+        
+        if (startOfGame)
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
+            window.clear();
+            guy.sf::Sprite::setPosition(0, spawnY);
+            guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
+            window.draw(introText);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+            {
+                startOfGame = false;
+            }
         }
 
-        view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
-        window.setView(view);
-        window.display();
+            //clientSyncLock.unlock(); //Allows Threads to edit Variables
 
+            while (window.pollEvent(event))
+            {
+                if (event.type == sf::Event::Closed)
+                    window.close();
+            }
+
+            view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
+            window.setView(view);
+            window.display();
     }
     clientSnc.terminate();
 }

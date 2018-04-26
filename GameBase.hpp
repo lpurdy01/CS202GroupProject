@@ -94,13 +94,9 @@ public:
 
     void updateChar();
 
-    bool collideCheck();
     bool collideX(float moveVal);
     bool collideY(float moveVal);
-    bool collideLeft();
-    bool collideRight();
-    bool collideTop();
-    bool collideBottom();
+    bool standing(float moveVal);
 
     void setxPos(int xPos);
     void setyPos(int yPos);
