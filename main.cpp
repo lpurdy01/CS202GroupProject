@@ -89,7 +89,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
             clientSyncLock.unlock();
             clientclocksend.restart();
         }
-        if(clientclockrecieve.getElapsedTime() > sf::milliseconds(150))
+        if(clientclockrecieve.getElapsedTime() > sf::milliseconds(110))
         {
 
 
@@ -111,7 +111,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
                     cout << "Recieved Character Package From Server" << endl;
                     for(auto & i:decodedChars)
                     {
-                        cout << "Client Side: ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                        cout << "Client Side: ID:  " << (int)(i.getID()) << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
                     }
 #endif
                 }
@@ -156,7 +156,9 @@ void runGame (NetworkClient & serverConnection)
     Character guy("Drawing.png");
     guy.sf::Sprite::setScale(.25, .25);
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
+    cout << "Client ID: " << (int)clientID << endl;
     guy.setID(clientID);
+    cout << "Guy ID: " << (int)(guy.getID()) << endl;
 
 
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);

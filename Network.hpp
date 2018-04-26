@@ -81,7 +81,7 @@ public:
 protected:
     std::list<ClientSocket> goodClients;
     sf::TcpListener listener;
-    sf::Int32 greatestClient = 1;
+    sf::Uint8 greatestClient = 1;
 };
 
 
