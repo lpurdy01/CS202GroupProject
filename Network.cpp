@@ -174,6 +174,7 @@ bool NetworkServer::sendCharacters(vector<Character> & characters)
             i.setBlocking(false);
         }
     }
+	return false;
 }
 
 bool NetworkClient::recieve(sf::Packet & pack)
