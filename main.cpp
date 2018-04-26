@@ -132,18 +132,15 @@ void runGame (NetworkClient & serverConnection)
     Clock::clock.restart();
     sf::Clock refreshTime;
     sf::Clock scaleTime;
-    float windowHeight = 768;
-    float windowWidth = 1366;
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
-
-    sf::Text deathText;
-    sf::Font deathFont;
-    deathFont.loadFromFile("comicbd.ttf");
-    deathText.setFont(deathFont);
-    deathText.setCharacterSize(50);
-    deathText.setFillColor(sf::Color::White);
-    deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
-    deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
+    float winH = 768;
+    float winW = 1366;
+    
+    float inc = 128;
+    float stdBlock = 64;
+    
+    sf::View view;
+    
+    sf::RenderWindow window(sf::VideoMode(winW, winH), "hElP Me!");
 
     sf::Font font;
     font.loadFromFile("comicbd.ttf");
@@ -159,9 +156,93 @@ void runGame (NetworkClient & serverConnection)
     auto clientID = serverConnection.clientSquak();
 
     Character guy("Drawing.png");
-    guy.sf::Sprite::setScale(.25, .25);
     Collidable::collideVec.push_back(&guy);
-    guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
+    float charW = guy.getLocalBounds().width / 5;
+    float charH = guy.getLocalBounds().height / 5;
+    
+    guy.sf::Sprite::setScale(charW/guy.getLocalBounds().width, charH/guy.getLocalBounds().height);
+    guy.sf::Sprite::setPosition(0, 29*inc - charH);
+    guy.setGrid(0, charW, 29*inc - charH, 29*inc);
+    
+    sf::RectangleShape bg;
+    bg.setSize(sf::Vector2f(40*inc, 40*inc));
+    bg.setPosition(-2*inc, -2*inc);
+    bg.setFillColor(sf::Color::White);
+    
+    Block edge1(-stdBlock,20*inc,stdBlock,10*inc);
+    Block edge2(0, 30*inc - stdBlock, 8*inc, stdBlock);
+    Block edge3(8*inc, 25*inc, stdBlock, 5*inc);
+    Block edge4(8*inc, 25*inc, 4*inc, stdBlock);
+    Block edge5(12*inc, 15*inc, inc, 10*inc+stdBlock);
+    Block edge6(-stdBlock, 20*inc - stdBlock, 6*inc, stdBlock);
+    Block edge7(5*inc - stdBlock, 0, stdBlock, 20*inc);
+    Block edge8(5*inc-stdBlock, -stdBlock, 4*inc, stdBlock);
+    Block edge9(8*inc, 15*inc, 5*inc, stdBlock);
+    Block edge10(8*inc, 0, stdBlock, 13*inc);
+    Block edge11(8*inc, 13*inc - stdBlock, 12*inc, stdBlock);
+    Block edge12(13*inc, 17*inc, 7*inc, stdBlock);
+    Block edge13(20*inc - stdBlock, 17*inc, stdBlock, 3*inc);
+    Block edge14(20*inc, 20*inc - stdBlock, 5*inc, stdBlock);
+    Block edge15(25*inc, 8*inc, stdBlock, 17*inc);
+    Block edge16(20*inc - stdBlock, 8*inc, stdBlock, 5*inc);
+    Block edge17(20*inc-stdBlock, 8*inc - stdBlock, 6*inc, stdBlock);
+    
+    Block block1(inc, 28*inc, 4*inc, inc);
+    Block block2(4*inc, 26*inc, 3*inc, inc);
+    Block block3(inc, 23*inc, 3*inc, inc);
+    Block block4(5*inc, 21*inc, inc, 4*inc);
+    Block block5(6*inc, 19*inc, 3*inc, inc);
+    Block block6(8*inc, 22*inc, 3*inc, inc);
+    Block block7(7*inc, 24*inc, inc, inc);
+    Block block8(11*inc, 20*inc, inc, inc);
+    Block block9(10*inc, 17*inc, inc, 2*inc);
+    Block block10(6*inc, 16*inc+stdBlock, 3*inc, inc);
+    Block block11(6*inc, 14*inc, inc, inc);
+    Block block12(5*inc, 13*inc, 1.5*inc, stdBlock);
+    Block block13(6*inc, 11*inc, 2*inc, stdBlock);
+    Block block14(5*inc, 9*inc, inc, inc);
+    Block block15(7*inc, 8*inc, inc, inc);
+    Block block16(5*inc, 6*inc, 2*inc, stdBlock);
+    Block block17(7*inc, 4*inc, inc, inc);
+    Block block18(5*inc, 2*inc, 2*inc, inc);
+    Block block19(10*inc, 14*inc+stdBlock, inc, stdBlock);
+    Block block20(14*inc, 14*inc, 10*inc, inc);
+    Block block21(23*inc, 12*inc, 2*inc, stdBlock);
+    Block block22(20*inc, 11*inc, 2*inc, stdBlock);
+    Block block23(23*inc, 10*inc+stdBlock, inc, stdBlock);
+    Block block24(20*inc, 9*inc, 4*inc, stdBlock);
+    Block block25(11*inc, 24*inc, inc, inc);
+    Block block26(3.5*inc, 24*inc, inc, inc);
+    
+    Block death1(6*inc, inc, 2*inc, stdBlock, Collidable::DEATH);
+    Block death2(2*inc, 21*inc, inc, inc, Collidable::DEATH);
+    Block death3(inc, 25*inc-stdBlock, 2*inc, 2*inc, Collidable::DEATH);
+    Block death4(7*inc, 21*inc, 2*inc, stdBlock, Collidable::DEATH);
+    Block death5(10*inc, 13*inc, inc, stdBlock, Collidable::DEATH);
+    Block death6(20*inc, 19*inc, 5*inc, inc, Collidable::DEATH);
+    
+    Block win1(21*inc, 8*inc, inc, stdBlock, Collidable::GOAL);
+    
+    sf::Text deathText;
+    sf::Font deathFont;
+    deathFont.loadFromFile("comicbd.ttf");
+    deathText.setFont(deathFont);
+    deathText.setCharacterSize(45);
+    deathText.setFillColor(sf::Color::White);
+    deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
+    deathText.setPosition(-4*inc, 29*inc - charH);
+    
+    sf::Text winText;
+    sf::Font winFont;
+    winFont.loadFromFile("comicbd.ttf");
+    winText.setFont(winFont);
+    winText.setCharacterSize(45);
+    winText.setFillColor(sf::Color::White);
+    winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
+    winText.setPosition(-3*inc, 29*inc - charH);
+    
+    view.setSize(winW/1.2, winH/1.2);
+    
     cout << "Client ID: " << (int)clientID << endl;
     guy.setID(clientID);
     cout << "Guy ID: " << (int)(guy.getID()) << endl;
@@ -173,24 +254,6 @@ void runGame (NetworkClient & serverConnection)
 
     int numChars = 0;
     vector<Character> charVec;
-
-    Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
-    ground.setFillColor(sf::Color::Black);
-
-    Block leftBound(-2,0,1,windowHeight);
-    Block rightBound(windowWidth+1,0,1,windowHeight);
-
-    Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
-    block1.setFillColor(sf::Color::Black);
-
-    Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
-    block2.setFillColor(sf::Color::Black);
-
-    Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::GOAL);
-    block3.setFillColor(sf::Color::Yellow);
-
-    sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
-    bg.setFillColor(sf::Color::White);
 
     sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock, & otherCharacters]()
     {
@@ -249,10 +312,61 @@ void runGame (NetworkClient & serverConnection)
 
         window.clear();
         window.draw(bg);
-        window.draw(ground);
+        
+        window.draw(edge1);
+        window.draw(edge2);
+        window.draw(edge3);
+        window.draw(edge4);
+        window.draw(edge5);
+        window.draw(edge6);
+        window.draw(edge7);
+        window.draw(edge8);
+        window.draw(edge9);
+        window.draw(edge10);
+        window.draw(edge11);
+        window.draw(edge12);
+        window.draw(edge13);
+        window.draw(edge14);
+        window.draw(edge15);
+        window.draw(edge16);
+        window.draw(edge17);
+        
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
+        window.draw(block4);
+        window.draw(block5);
+        window.draw(block6);
+        window.draw(block7);
+        window.draw(block8);
+        window.draw(block9);
+        window.draw(block10);
+        window.draw(block11);
+        window.draw(block12);
+        window.draw(block13);
+        window.draw(block14);
+        window.draw(block15);
+        window.draw(block16);
+        window.draw(block17);
+        window.draw(block18);
+        window.draw(block19);
+        window.draw(block20);
+        window.draw(block21);
+        window.draw(block22);
+        window.draw(block23);
+        window.draw(block24);
+        window.draw(block25);
+        window.draw(block26);
+        
+        window.draw(death1);
+        window.draw(death2);
+        window.draw(death3);
+        window.draw(death4);
+        window.draw(death5);
+        window.draw(death6);
+        
+        window.draw(win1);
+        
         /*
         if(refreshTime.getElapsedTime() > sf::milliseconds(100))
         {
@@ -313,30 +427,27 @@ void runGame (NetworkClient & serverConnection)
         if (guy.checkIfDead())
         {
             window.clear();
+            guy.sf::Sprite::setPosition(0, 29*inc - charH);
+            guy.setGrid(0, charW, 29*inc - charH, 29*inc);
+            view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
+            window.setView(view);
             window.draw(deathText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
-                window.close();
-                runGame(serverConnection);
+                guy.setIfDead(0);
             }
         }
 
         if (guy.checkIfWin())
         {
             window.clear();
-            sf::Text winText;
-            sf::Font winFont;
-            winFont.loadFromFile("comicbd.ttf");
-            winText.setFont(winFont);
-            winText.setCharacterSize(50);
-            winText.setFillColor(sf::Color::White);
-            winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
-            winText.setPosition(windowWidth / 5, windowHeight / 2 - 50);
+            guy.sf::Sprite::setPosition(0, 29*inc - charH);
+            guy.setGrid(0, charW, 29*inc - charH, 29*inc);
+            view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
+            window.setView(view);
             window.draw(winText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
-                guy.updateGrid(-guy.sf::Sprite::getPosition().x, -guy.sf::Sprite::getPosition().y);
-                guy.sf::Sprite::setPosition(0, 0);
                 guy.setIfWin(0);
             }
         }
@@ -349,6 +460,8 @@ void runGame (NetworkClient & serverConnection)
                 window.close();
         }
 
+        view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
+        window.setView(view);
         window.display();
 
     }

@@ -136,7 +136,8 @@ void Character::updateChar() {
     double timeInc = time.asSeconds();
     //std::cout << 1/timeInc << std::endl;
 
-    double moveValue = 5;
+    double moveValue = 10;
+    double jumpVal = 550;
     double moveFactor = 50;
     double g = 980;
 
@@ -177,7 +178,7 @@ void Character::updateChar() {
     {
         if (getyVel() != 0) { numJumps--; }
         numJumps--;
-        setyVel(-500);
+        setyVel(-jumpVal);
     }
 
     if (numJumps == 1 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -189,7 +190,7 @@ void Character::updateChar() {
     {
         secondJump = false;
         numJumps--;
-        setyVel(-500);
+        setyVel(-jumpVal);
     }
 
     else
@@ -352,11 +353,17 @@ Background::Background (const std::string filepath) {
 Background::~Background() { }
 
 // -----------------------Block Functions-----------------------------
+vector<Block> Block::blockList = {};
+
 Block::Block (const int x, const int y, const int width, const int height, const Condition condition) :
     Collidable(x, y, height, width, condition)
 {
     this->setSize(sf::Vector2f(width, height));
     this->sf::Shape::setPosition(x, y);
+    this->sf::Shape::setFillColor(sf::Color::Black);
+    
+    if(condition == Condition::DEATH) { this->sf::Shape::setFillColor(sf::Color::Red); }
+    if(condition == Condition::GOAL) { this->sf::Shape::setFillColor(sf::Color::Yellow); }
 
     collideVec.push_back(this);
 }

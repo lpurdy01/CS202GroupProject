@@ -145,6 +145,8 @@ private:
 class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
+    static vector<Block> blockList;
+    
     Block (const int x, const int y, const int width, const int height, const Condition condition = Collidable::REGULAR);
 
     void deathBlock();
