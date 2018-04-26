@@ -98,7 +98,7 @@ Character::Character (std::string filepath) :
     }
     this->setTexture(_texture);
     this->setGrid(0,this->getLocalBounds().width,0,this->getLocalBounds().height);
-    
+
     collideVec.push_back(this);
 	setIfDead(false);
 }
@@ -115,7 +115,7 @@ Character::Character (const int x, const int y, const std::string filepath) :
     this->sf::Sprite::setPosition(sf::Vector2f(x,y));
 
     this->setGrid(x,x+this->getLocalBounds().width,y,y+this->getLocalBounds().height);
-    
+
     collideVec.push_back(this);
 	setIfDead(false);
 }
@@ -178,24 +178,24 @@ void Character::updateChar() {
         numJumps--;
         setyVel(-500);
     }
-    
+
     if (numJumps == 1 && !sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
         secondJump = true;
     }
-    
+
     if (numJumps == 1 && sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && secondJump)
     {
         secondJump = false;
         numJumps--;
         setyVel(-500);
     }
-        
+
     else
     {
         setyVel(getyVel()+g*timeInc);
     }
-    
+
     if (collideY(getyVel()*timeInc))
     {
         numJumps = 2;
@@ -203,15 +203,15 @@ void Character::updateChar() {
         setyVel(0);
         //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     }
-    
+
     if (collideX(getxVel()*timeInc))
     {
         setxVel(0);
     }
-    
+
     this->sf::Sprite::move(getxVel()*timeInc,getyVel()*timeInc);
     this->updateGrid(getxVel()*timeInc,getyVel()*timeInc);
-    
+
     //std::cout << "Guy: x1: " << this->getGrid().x1 << ", x2: " << this->getGrid().x2 << ", y1: " << this->getGrid().y1 << ", y2: " << this->getGrid().y2 << std::endl;
 
     time = Clock::clock.restart();
@@ -225,7 +225,7 @@ bool Character::collideCheck()
         {
             continue;
         }
-        
+
         if ((this->getGrid().x2 >= object->getGrid().x1 && this->getGrid().x2 <= object->getGrid().x2)
             ||
             (this->getGrid().x1 >= object->getGrid().x1 && this->getGrid().x1 <= object->getGrid().x2))
@@ -247,7 +247,7 @@ bool Character::collideX(float moveVal)
     float x2 = this->getGrid().x2 + moveVal;
     float y1 = this->getGrid().y1;
     float y2 = this->getGrid().y2;
-    
+
     for (auto &object : collideVec)
     {
         if (this == object)
@@ -280,7 +280,7 @@ bool Character::collideY(float moveVal)
     float y2 = this->getGrid().y2 + moveVal;
     float x1 = this->getGrid().x1;
     float x2 = this->getGrid().x2;
-    
+
     for (auto &object : collideVec)
     {
         if (this == object)
@@ -315,7 +315,7 @@ bool Character::collideLeft()
         {
             continue;
         }
-        
+
         if ((this->getGrid().x2 >= object->getGrid().x1 && this->getGrid().x2 <= object->getGrid().x2)
             &&
             (this->getGrid().x1 <= object->getGrid().x1 || this->getGrid().x1 >= object->getGrid().x2))
@@ -335,7 +335,7 @@ bool Character::collideRight()
         {
             continue;
         }
-        
+
         if ((this->getGrid().x2 <= object->getGrid().x1 || this->getGrid().x2 >= object->getGrid().x2)
             &&
             (this->getGrid().x1 >= object->getGrid().x1 && this->getGrid().x1 <= object->getGrid().x2))
@@ -420,11 +420,11 @@ Block::Block (const int x, const int y, const int width, const int height) :
 {
     this->setSize(sf::Vector2f(width, height));
     this->sf::Shape::setPosition(x, y);
-    
+
     collideVec.push_back(this);
 }
 
 Block::~Block()
 {
-    
+
 }
