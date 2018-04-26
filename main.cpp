@@ -7,6 +7,10 @@
 #include "ResourceFunctions.hpp"
 #include "Network.hpp"
 
+#define serverDebug 0
+#define clientRecieveDebug 0
+
+
 
 void runServer()
 {
@@ -15,41 +19,104 @@ void runServer()
     cout << "IP Address: " << ipLocal << endl;
     NetworkServer server;
     server.prepare();
+    sf::Clock clock;
+    vector<Character> serverCharacters;
     while(true)
     {
         sf::Uint8 packType = 0;
         NetworkPackage datapack;
-        datapack = server.recieveNet();
-        //cout << "Recieved Datapack" << endl;
-        datapack >> packType;
-        if(packType == CharacterPacket)
+        if(server.recieve(datapack))
         {
-            vector<Character> decodedChars = datapack.decodeCharacters();
-            for(Character i:decodedChars)
+            //cout << "Recieved Datapack" << endl;
+            datapack >> packType;
+            if(packType == CharacterPacket)
             {
-                //cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                vector<Character> decodedChars = datapack.decodeCharacters();
+                server.updateCharactersVector(serverCharacters,decodedChars);
+                #if(serverDebug)
+            cout << "Number of Characters in Array: " << serverCharacters.size() << endl;
+#endif
+#if(serverDebug)
+                for(Character & i:decodedChars)
+                {
+                    cout << "ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                }
+#endif
+            }
+            if(packType == SquakPacket)
+            {
+                cout << "Recieved ID Request... This is a problem" << endl;
             }
         }
-        if(packType == SquakPacket)
+        if(clock.getElapsedTime() > sf::milliseconds(20))
         {
-            cout << "Recieved ID Request" << endl;
-            server.handleClientSquak(datapack);
-            cout << "Gave Client ID: " << (server.getGreatestClient() - 1) << endl;
+            server.acceptClient(false);
+
+            if(serverCharacters.size())
+            {
+                #if(serverDebug)
+                for(Character & i:serverCharacters)
+                {
+                    cout << "Character to send ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                }
+                #endif
+                server.sendCharacters(serverCharacters);
+#if(serverDebug)
+                cout << "Sending Characters" << endl;
+
+#endif
+            }
+            clock.restart();
         }
     }
 }
 
-void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf::Mutex & clientSyncLock)
+void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf::Mutex & clientSyncLock, vector<Character> & otherCharacters)
 {
+    sf::Clock clientclocksend;
+    sf::Clock clientclockrecieve;
     while(true)
     {
-        NetworkPackage pack;
-        clientSyncLock.lock();
-        pack.encodeCharacter(mainCharacter);
-        clientSyncLock.unlock();
-        pack.composePackage();
-        serverConnection.send(pack);
-        sf::sleep(sf::milliseconds(100));
+        if(clientclocksend.getElapsedTime() > sf::milliseconds(100))
+        {
+
+
+            NetworkPackage pack;
+            clientSyncLock.lock();
+            pack.encodeCharacter(mainCharacter);
+            pack.composePackage();
+            serverConnection.send(pack);
+            clientSyncLock.unlock();
+            clientclocksend.restart();
+        }
+        if(clientclockrecieve.getElapsedTime() > sf::milliseconds(110))
+        {
+
+
+            sf::Uint8 packType = 0;
+            sf::Packet clientdatapack;
+            if(serverConnection.recieve(clientdatapack))
+            {
+                NetworkPackage clientNetworkPackage;
+                clientNetworkPackage.append(clientdatapack.getData(),clientdatapack.getDataSize());
+                clientNetworkPackage >> packType;
+                if(packType == CharacterPacket)
+                {
+                    vector<Character> decodedChars = clientNetworkPackage.decodeCharacters();
+
+                    clientSyncLock.lock();
+                    serverConnection.updateCharactersVector(otherCharacters, decodedChars);
+                    clientSyncLock.unlock();
+#if(clientRecieveDebug)
+                    cout << "Recieved Character Package From Server" << endl;
+                    for(auto & i:otherCharacters)
+                    {
+                        cout << "Client Side: ID:  " << (int)(i.getID()) << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
+                    }
+#endif
+                }
+            }
+        }
     }
 }
 
@@ -57,11 +124,31 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
 void runGame (NetworkClient & serverConnection)
 {
     sf::Mutex clientSyncLock;
+    vector<Character> otherCharacters;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
     float windowHeight = 768;
     float windowWidth = 1366;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
+
+    sf::Text deathText;
+    sf::Font deathFont;
+    deathFont.loadFromFile("comicbd.ttf");
+    deathText.setFont(deathFont);
+    deathText.setCharacterSize(50);
+    deathText.setFillColor(sf::Color::White);
+    deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
+    deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
+
+	sf::Font font;
+	font.loadFromFile("comicbd.ttf");
+
+	sf::Text text;
+	text.setFont(font);
+	text.setPosition(200, 200);
+	text.setCharacterSize(50);
+	text.setFillColor(sf::Color::Yellow);
+	text.setString("This is our game!\n Press space to continue");
 
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
@@ -69,11 +156,14 @@ void runGame (NetworkClient & serverConnection)
     Character guy("Drawing.png");
     guy.sf::Sprite::setScale(.25, .25);
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
+    cout << "Client ID: " << (int)clientID << endl;
     guy.setID(clientID);
+    cout << "Guy ID: " << (int)(guy.getID()) << endl;
+
 
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
     ground.setFillColor(sf::Color::Black);
-    
+
     Block leftBound(-2,0,1,windowHeight);
     Block rightBound(windowWidth+1,0,1,windowHeight);
 
@@ -86,67 +176,82 @@ void runGame (NetworkClient & serverConnection)
     Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::GOAL);
 	block3.setFillColor(sf::Color::Yellow);
 
-    //Background bg("cute_image.jpg");
-    //bg.setScale(2,2);
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
 
-    sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock]()
+    sf::Thread clientSnc([&serverConnection, &guy, &clientSyncLock, & otherCharacters]()
     {
-        clientSync(serverConnection, guy, clientSyncLock);
+        clientSync(serverConnection, guy, clientSyncLock, otherCharacters);
     });
     clientSnc.launch();
+
+	bool wait = false;
 
     while (window.isOpen())
     {
         clientSyncLock.lock(); //Stops Threads from editing variables
         //Place any variable manipulation here
 
-		window.clear();
+        sf::Event event;
+        window.clear();
+        window.draw(text);
+
+//        if (event.type == sf::Event::KeyPressed)
+//        {
+//            wait = false;
+//        }
+
+        window.clear();
         window.draw(bg);
         window.draw(ground);
-        window.draw(guy);
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
+        for(int i = 0; i < otherCharacters.size(); i++)
+        {
+            otherCharacters[i].sf::Sprite::setScale(.25, .25);
+            window.draw(otherCharacters[i]);
+        }
 
-        sf::Event event;
-
+        window.draw(guy);
+        
         guy.updateChar();
-        //std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
-        //guy.setIfDead(true);
-        if (guy.checkIfDead()) {
+
+        if (guy.checkIfDead())
+        {
             window.clear();
-            sf::Text deathText;
-            sf::Font deathFont;
-            deathFont.loadFromFile("comicbd.ttf");
-            deathText.setFont(deathFont);
-            deathText.setCharacterSize(50);
-            deathText.setFillColor(sf::Color::White);
-            deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
-            deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
             window.draw(deathText);
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+            {
                 window.close();
                 runGame(serverConnection);
             }
         }
 
-        if (guy.checkIfWin()) {
-		window.clear();
-		sf::Text winText;
-		sf::Font winFont;
-		winFont.loadFromFile("comicbd.ttf");
-		winText.setFont(winFont);
-		winText.setCharacterSize(50);
-		winText.setFillColor(sf::Color::White);
-		winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
-		winText.setPosition(windowWidth / 5, windowHeight / 2 - 50);
-		window.draw(winText);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
-		window.close();
-		runGame(serverConnection);
-        }
+        if (guy.checkIfWin())
+        {
+            window.clear();
+            sf::Text winText;
+            sf::Font winFont;
+            winFont.loadFromFile("comicbd.ttf");
+            winText.setFont(winFont);
+            winText.setCharacterSize(50);
+            winText.setFillColor(sf::Color::White);
+            winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
+            winText.setPosition(windowWidth / 5, windowHeight / 2 - 50);
+            window.draw(winText);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+            {
+                window.close();
+//                for (int i = 0; i < Collidable::collideVec.size(); i++)
+//                {
+//                    if (Collidable::collideVec[i] == &guy)
+//                    {
+//                        Collidable::collideVec.erase(Collidable::collideVec.begin()+i);
+//                    }
+//                }
+                runGame(serverConnection);
+            }
         }
 
         clientSyncLock.unlock(); //Allows Threads to edit Variables

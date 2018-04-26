@@ -19,7 +19,14 @@ using std::cout;
 using std::endl;
 #include <vector>
 using std::vector;
+#include <memory>
+#include <list>
 
+
+class ClientSocket : public sf::TcpSocket{
+public:
+    int hasConnected = 0;
+};
 
 class NetworkPackage : public sf::Packet
 {
@@ -27,6 +34,7 @@ public:
     void encodeCharacter(Character & ckar);
     vector<Character> decodeCharacters();
     void composePackage();
+    void setPackageType(int type) {PacketType = type;}
 
 protected:
     sf::Uint16 numberOfCharacters = 0;
@@ -44,7 +52,10 @@ public:
     int connect(string ip , int port = 53000);
     int send(sf::Packet packet);
     sf::Uint8 clientSquak();
-    sf::Packet recieve();
+    bool recieve(vector<Character> & characters);
+    bool recieve(sf::Packet & pack);
+    sf::Packet recieve(bool Blocking = true);
+    void updateCharactersVector(vector<Character> & serverCharacters, vector<Character> & incomingCharacters);
 
 protected:
     sf::TcpSocket socket;
@@ -58,18 +69,22 @@ class NetworkServer
 public:
     int prepare();
     int listen(int port = 53000);
-    int acceptClient();
-    sf::Packet recieve();
-    NetworkPackage recieveNet();
-    bool handleClientSquak(sf::Packet packet);
+    int acceptClient(bool blocking);
+    bool recieve(sf::Packet & pack);
+    //sf::Packet recieve(bool Blocking = true);
+    bool handleClientSquak(sf::Packet & packet, ClientSocket & client);
     int getGreatestClient() {return greatestClient;}
+    bool sendCharacters(vector<Character> & characters);
+    void printGoodClients();
+    void updateCharactersVector(vector<Character> & serverCharacters, vector<Character> & incomingCharacters);
 
 protected:
-    vector<sf::TcpSocket> goodClients;
-    sf::TcpSocket client;
+    std::list<ClientSocket> goodClients;
     sf::TcpListener listener;
-    sf::Int32 greatestClient = 1;
+    sf::Uint8 greatestClient = 1;
 };
+
+
 
 
 

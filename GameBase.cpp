@@ -3,24 +3,16 @@
 #include "GameBase.hpp"
 #include <iostream>
 
-int Entity::numEntities = 0;
 vector<Character> charList = { };
 Clock Clock::clock;
 
 // ----------------------Entity Functions----------------------------
-Entity::Entity (const int x, const int y) : _xPos(x),_yPos(y) { addEntity(); }
+Entity::Entity (const int x, const int y) : _xPos(x),_yPos(y) { }
 
-Entity::~Entity() { deleteEntity(); }
+Entity::~Entity() { }
 
-void Entity::addEntity() { numEntities++; }
-void Entity::deleteEntity() { numEntities--; }
+// --------------------Collision Functions---------------------------
 
-void Entity::setxPos(int xPos) { _xPos = xPos; }
-void Entity::setyPos(int yPos) { _yPos = yPos; }
-int Entity::getxPos() { return _xPos; }
-int Entity::getyPos() { return _yPos; }
-
-// ------------------CollisionGrid Functions-------------------------
 CollisionGrid::CollisionGrid()
 {
 
@@ -104,7 +96,6 @@ int Collidable::getWidth()
 Character::Character (std::string filepath) :
     Collidable(0, 0, this->getLocalBounds().height,this->getLocalBounds().width)
 {
-    addEntity();
     if (!_texture.loadFromFile(filepath)) {
         //return EXIT_FAILURE;
     }
@@ -132,7 +123,8 @@ Character::Character (const int x, const int y, const std::string filepath) :
 	setIfDead(false);
 }
 
-Character::~Character() { deleteEntity(); }
+Character::~Character()
+{}
 
 void Character::setxVel(double xVel) { _xVel = xVel; }
 void Character::setyVel(double yVel) { _yVel = yVel; }
@@ -229,6 +221,20 @@ void Character::updateChar() {
     time = Clock::clock.restart();
 }
 
+
+void Character::setxPos(int xPos)
+{
+    this->sf::Sprite::setPosition(xPos, this->getyPos());
+    _xPos = xPos;
+}
+void Character::setyPos(int yPos)
+{
+    this->sf::Sprite::setPosition(this->getxPos(),yPos);
+    _yPos = yPos;
+}
+int Character::getxPos() { return _xPos; }
+int Character::getyPos() { return _yPos; }
+
 bool Character::collideX(float moveVal)
 {
     float x1 = this->getGrid().x1 + moveVal;
@@ -311,6 +317,7 @@ bool Character::collideY(float moveVal)
     return false;
 }
 
+
 void Character::transpose(const int &x, const int &y) {
     setxPos(x+getxPos());
     setyPos(y+getyPos());
@@ -345,7 +352,7 @@ Background::Background (const std::string filepath) {
     this->setTexture(_texture);
 }
 
-Background::~Background() { deleteEntity(); }
+Background::~Background() { }
 
 // -----------------------Block Functions-----------------------------
 Block::Block (const int x, const int y, const int width, const int height, const Condition condition) :

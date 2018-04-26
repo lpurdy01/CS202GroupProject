@@ -3,6 +3,9 @@
 
 
 #include "Network.hpp"
+#define acceptClientDebug 0
+#define clientRecieveDebug 0
+#define clientSendDebug 0
 
 
 int NetworkClient::connect(string ip, int port)
@@ -24,37 +27,22 @@ int NetworkClient::connect(string ip, int port)
     if (status != sf::Socket::Done)
     {
         cout << "Failed to Connect" << endl;
-        return 0;
+        return 1;
     }
     cout << "Connected" << endl;
     return 1;
 }
+
+
 int NetworkClient::send(sf::Packet packet)
 {
-    //cout << "Sending Packet" << endl;
+    #if(clientSendDebug)
+    cout << "Sending Packet" << endl;
+    #endif
+    socket.setBlocking(true);
     socket.send(packet);
+    socket.setBlocking(false);
     return 1;
-}
-
-sf::Uint8 NetworkClient::clientSquak(){
-    cout << "Sending Client Squak Packet" << endl;
-    sf::Packet dataPack;
-    sf::Uint8 packetType = SquakPacket;
-    dataPack << packetType;
-    socket.send(dataPack);
-    dataPack = recieve();
-    dataPack >> packetType;
-    if(packetType = ClientIDPacket){
-        sf::Uint8 charID;
-        dataPack >> charID;
-        clientID = charID;
-        return charID;
-    }
-    else {
-        cout << "Bad Client ID" << endl;
-        return 0;
-    }
-
 }
 
 int NetworkServer::listen(int port)
@@ -70,53 +58,224 @@ int NetworkServer::listen(int port)
 }
 
 
-int NetworkServer::acceptClient()
+int NetworkServer::acceptClient(bool blocking)
 {
-    sf::TcpSocket tempClient;
-    cout << "Waiting for Client" << endl;
-    if (listener.accept(tempClient) != sf::Socket::Done)
+    if(blocking)
     {
-        cout << "Something Bad happened, Client didn't Connect" << endl;
+        #if(acceptClientDebug == 1)
+        cout << "Blocking accept Client Called" << endl;
+        printGoodClients();
+        #endif
+        listener.setBlocking(true);
+        if(goodClients.back().hasConnected == 0)
+        {
+            goodClients.back().setBlocking(true);
+        }
+        else
+        {
+            goodClients.emplace_back();
+            cout << "Adding Client To GoodClient List From Blocking" << endl;
+        }
+        cout << "Waiting for Client" << endl;
+        if (listener.accept(goodClients.back()) != sf::Socket::Done)
+        {
+            cout << "Something Bad happened, Client didn't Connect" << endl;
+            return 0;
+            //goodClients.pop_back();
+        }
+        cout << "Found Client: " << goodClients.back().getRemoteAddress() << endl;
+        sf::Packet clientSquak;
+        goodClients.back().receive(clientSquak);
+        if(handleClientSquak(clientSquak, goodClients.back()))
+        {
+            goodClients.back().setBlocking(false);
+            goodClients.back().hasConnected = 1;
+            return 1;
+        }
+        else
+        {
+            return 0;
+            //goodClients.pop_back();
+        }
+    }
+    else
+    {
+        #if(acceptClientDebug == 1)
+        cout << "Non Blocking Accept Called" << endl;
+        printGoodClients();
+        #endif
+        listener.setBlocking(false);
+        if(goodClients.back().hasConnected == 1)
+        {
+            goodClients.emplace_back();
+            cout << "Adding Client To GoodClient List From NonBlocking" << endl;
+            goodClients.back().setBlocking(false);
+            return 0;
+        }
+        else if(goodClients.back().hasConnected == 0)
+        {
+            goodClients.back().setBlocking(false);
+        }
+        if (listener.accept(goodClients.back()) == sf::Socket::Done)
+        {
+            cout << "Accepting New Client" << endl;
+            cout << "Found Client: " << goodClients.back().getRemoteAddress() << endl;
+            sf::Packet clientSquak;
+            goodClients.back().setBlocking(true);
+            goodClients.back().receive(clientSquak);
+            if(handleClientSquak(clientSquak, goodClients.back()))
+            {
+                goodClients.back().setBlocking(false);
+                goodClients.back().hasConnected = 1;
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+
+}
+
+bool NetworkServer::recieve(sf::Packet & pack)
+{
+    for(auto & client:goodClients)
+    {
+        sf::Packet tempPack;
+        if(client.receive(tempPack) == sf::Socket::Status::Done)
+        {
+            pack = tempPack;
+
+            return true;
+        }
+    }
+    return false;
+
+}
+
+bool NetworkServer::sendCharacters(vector<Character> & characters)
+{
+    NetworkPackage package;
+    for(auto & i:characters)
+    {
+        package.encodeCharacter(i);
+    }
+    package.composePackage();
+
+    for(auto & i:goodClients)
+    {
+        if(i.hasConnected == 1)
+        {
+            i.setBlocking(true);
+           // cout << "Server Sending Package with data address: " << package.getData() << endl;
+            i.send(package);
+            //cout << "Sending Package Size: " << package.getDataSize() << endl;
+            i.setBlocking(false);
+        }
+    }
+}
+
+bool NetworkClient::recieve(sf::Packet & pack)
+{
+    sf::Packet tempPack;
+    socket.setBlocking(true);
+        if(socket.receive(tempPack) == sf::Socket::Status::Done)
+        {
+            //cout << "Temp Pack size: "<<tempPack.getDataSize() << " Temp Pack Data: " << tempPack.getData() << endl;
+            pack.append(tempPack.getData(),tempPack.getDataSize());
+            return true;
+        }
+        else return false;
+}
+
+bool NetworkClient::recieve(vector<Character> & characters)
+{
+    NetworkPackage pack;
+    socket.setBlocking(false);
+    if(socket.receive(pack) == sf::Socket::Status::Done)
+    {
+        #if(clientRecieveDebug)
+        cout << "Client Recieved Packet" << endl;
+        #endif
+        sf::Uint8 packType;
+        pack >> packType;
+        if(packType == CharacterPacket)
+        {
+           characters = pack.decodeCharacters();
+           return true;
+        }
+        else
+        {
+            cout << "Recieved non Character Packet" << endl;
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
+}
+sf::Packet NetworkClient::recieve(bool Blocking)
+{
+    sf::Packet pack;
+    socket.setBlocking(Blocking);
+    socket.receive(pack);
+    socket.setBlocking(false);
+    return pack;
+}
+
+sf::Uint8 NetworkClient::clientSquak()
+{
+    cout << "Sending Client Squak Packet" << endl;
+    sf::Packet dataPack;
+    sf::Uint8 packetType = SquakPacket;
+    dataPack << packetType;
+    socket.send(dataPack);
+    dataPack = recieve(true);
+    dataPack >> packetType;
+    if(packetType == ClientIDPacket)
+    {
+        sf::Uint8 charID;
+        dataPack >> charID;
+        clientID = charID;
+        return charID;
+    }
+    else
+    {
+        cout << "Bad Client ID" << endl;
         return 0;
     }
-    cout << "Found Client: " << client.getRemoteAddress() << endl;
-    return 1;
-}
 
-sf::Packet NetworkServer::recieve()
+}
+bool NetworkServer::handleClientSquak(sf::Packet & packet, ClientSocket & client)
 {
-    sf::Packet data;
-    client.receive(data);
-    return data;
+    sf::Uint8 packType = 0;
+    packet >> packType;
+    if(packType == SquakPacket)
+    {
+        cout << "Recieved ID Request" << endl;
+        sf::Packet clientIDPacket;
+        sf::Uint8 packetType = ClientIDPacket;
+        clientIDPacket << packetType << greatestClient;
+        greatestClient++;
+        client.send(clientIDPacket);
+        cout << "Gave Client ID: " << (greatestClient - 1) << endl;
+        return 1;
+    }
+    else
+    {
+        cout << "Bad client Squak" << endl;
+        return 0;
+    }
 }
-
-sf::Packet NetworkClient::recieve(){
-    sf::Packet data;
-    socket.receive(data);
-    return data;
-}
-
-bool NetworkServer::handleClientSquak(sf::Packet packet){
-    sf::Packet clientIDPacket;
-    sf::Uint8 packetType = ClientIDPacket;
-    clientIDPacket << packetType << greatestClient;
-    greatestClient++;
-    client.send(clientIDPacket);
-    return 1;
-}
-
-NetworkPackage NetworkServer::recieveNet()
-{
-    NetworkPackage data;
-    client.receive(data);
-    return data;
-}
-
 
 int NetworkServer::prepare()
 {
     listen();
-    acceptClient();
+    goodClients.emplace_back();
+    acceptClient(true);
     return 1;
 }
 
@@ -159,7 +318,8 @@ vector<Character> NetworkPackage::decodeCharacters()
                 //cout << characterDataSize << endl;
                 Character holder;
                 sf::Uint32 siz = sizeof(holder.getID()) + (sizeof(holder.getxPos())*2) + (sizeof(holder.getxVel())*2);
-                if(characterDataSize == siz){
+                if(characterDataSize == siz)
+                {
                     *this >> character_id >> xCor >> yCor >> xVel >> yVel;
                     holder.setID(character_id);
                     holder.setxPos(xCor);
@@ -169,7 +329,8 @@ vector<Character> NetworkPackage::decodeCharacters()
                     charvect.push_back(holder);
 
                 }
-                else{
+                else
+                {
                     okToDecode = false;
                     cout << "INCOMPATABLE CHARACTER DATA SIZE ABORTING DECODE" << "  Expected size: " << siz << " Recieved size: " << characterDataSize << endl;
 
@@ -181,4 +342,57 @@ vector<Character> NetworkPackage::decodeCharacters()
     }
 }
 
+void NetworkServer::printGoodClients()
+{
+    for(ClientSocket& i:goodClients)
+    {
+        cout << "Client: " << i.getRemoteAddress() << "Is Connected = " << i.hasConnected << endl;
+    }
+}
+
+void NetworkServer::updateCharactersVector(vector<Character> & serverCharacters, vector<Character> & incomingCharacters)
+{
+    for(Character & i:incomingCharacters)
+    {
+        bool present = false;
+        for(Character & a:serverCharacters)
+        {
+            if(i.getID() == a.getID())
+            {
+                a.setxPos(i.getxPos());
+                a.setyPos(i.getyPos());
+                a.setxVel(i.getxVel());
+                a.setyVel(i.getyVel());
+                present = true;
+            }
+        }
+        if(!present)
+        {
+            serverCharacters.push_back(i);
+        }
+    }
+}
+
+void NetworkClient::updateCharactersVector(vector<Character> & serverCharacters, vector<Character> & incomingCharacters)
+{
+    for(Character & i:incomingCharacters)
+    {
+        bool present = false;
+        for(Character & a:serverCharacters)
+        {
+            if(i.getID() == a.getID())
+            {
+                a.setxPos(i.getxPos());
+                a.setyPos(i.getyPos());
+                a.setxVel(i.getxVel());
+                a.setyVel(i.getyVel());
+                present = true;
+            }
+        }
+        if(!present)
+        {
+            serverCharacters.push_back(i);
+        }
+    }
+}
 
