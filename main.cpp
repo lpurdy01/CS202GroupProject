@@ -80,7 +80,7 @@ void runGame (NetworkClient & serverConnection)
     Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
     block1.setFillColor(sf::Color::Black);
 
-	Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
+    Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::DEATH);
 	block2.setFillColor(sf::Color::Black);
 
 	Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
@@ -102,6 +102,7 @@ void runGame (NetworkClient & serverConnection)
         clientSyncLock.lock(); //Stops Threads from editing variables
         //Place any variable manipulation here
 
+<<<<<<< HEAD
 			window.clear();
 			window.draw(bg);
 			window.draw(ground);
@@ -160,6 +161,44 @@ void runGame (NetworkClient & serverConnection)
 				if (event.type == sf::Event::Closed)
 					window.close();
 			}
+=======
+        window.clear();
+        window.draw(bg);
+        window.draw(ground);
+        window.draw(guy);
+        window.draw(block1);
+        window.draw(block2);
+
+        sf::Event event;
+
+        guy.updateChar();
+        //std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
+        //guy.setIfDead(true);
+        if (guy.checkIfDead()) {
+            window.clear();
+            sf::Text deathText;
+            sf::Font deathFont;
+            deathFont.loadFromFile("comicbd.ttf");
+            deathText.setFont(deathFont);
+            deathText.setCharacterSize(50);
+            deathText.setFillColor(sf::Color::White);
+            deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
+            deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
+            window.draw(deathText);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+                window.close();
+                runGame(serverConnection);
+            }
+        }
+
+        clientSyncLock.unlock(); //Allows Threads to edit Variables
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+>>>>>>> 6dd2df0c4f3a6205c04b400aed343747b4c6f934
 
         window.display();
 

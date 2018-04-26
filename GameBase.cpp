@@ -34,7 +34,8 @@ CollisionGrid::~CollisionGrid()
 // -------------------Collidable Functions---------------------------
 vector<Collidable*> Collidable::collideVec = {};
 
-Collidable::Collidable(const float height, const float width) : _height(height), _width(width)
+Collidable::Collidable(const float height, const float width, const Condition condition) :
+    _height(height), _width(width), _condition(condition)
 {
     _position.x1 = this->getPosition().x;
     _position.x2 = this->getPosition().x + (float)getWidth();
@@ -42,14 +43,25 @@ Collidable::Collidable(const float height, const float width) : _height(height),
     _position.y2 = this->getPosition().y + (float)getHeight();
 }
 
-Collidable::Collidable(const float x, const float y, const float height, const float width) :
-    _height(height), _width(width)
+Collidable::Collidable(const float x, const float y, const float height, const float width, const Condition condition) :
+    _height(height), _width(width), _condition(condition)
 {
     this->setPosition(x, y);
     _position.x1 = this->getPosition().x;
     _position.x2 = this->getPosition().x + (float)getWidth();
     _position.y1 = this->getPosition().y;
     _position.y2 = this->getPosition().y + (float)getHeight();
+}
+
+string Collidable::getCondition()
+{
+    if (_condition == Condition::REGULAR)
+        return "Regular";
+    else if (_condition == Condition::DEATH)
+        return "Death";
+    else if (_condition == Condition::GOAL)
+        return "Goal";
+
 }
 
 Collidable::~Collidable ()
@@ -90,7 +102,7 @@ int Collidable::getWidth()
 
 // --------------------Character Functions---------------------------
 Character::Character (std::string filepath) :
-    Collidable(this->getLocalBounds().height,this->getLocalBounds().width)
+    Collidable(0, 0, this->getLocalBounds().height,this->getLocalBounds().width)
 {
     addEntity();
     if (!_texture.loadFromFile(filepath)) {
@@ -105,7 +117,7 @@ Character::Character (std::string filepath) :
 
 Character::Character (const int x, const int y, const std::string filepath) :
     Entity::Entity(x,y),
-    Collidable(this->getLocalBounds().height,this->getLocalBounds().width)
+    Collidable(x, y, this->getLocalBounds().height,this->getLocalBounds().width)
 
 {
     if (!_texture.loadFromFile(filepath)) {
@@ -244,6 +256,10 @@ bool Character::collideX(float moveVal)
             )
           )
         {
+            if (object->getCondition() == "Death")
+            {
+                this->setIfDead(true);
+            }
             return true;
         }
     }
@@ -277,6 +293,10 @@ bool Character::collideY(float moveVal)
             )
           )
         {
+            if (object->getCondition() == "Death")
+            {
+                this->setIfDead(true);
+            }
             return true;
         }
     }
@@ -310,15 +330,12 @@ Background::Background (const std::string filepath) {
 Background::~Background() { deleteEntity(); }
 
 // -----------------------Block Functions-----------------------------
-Block::Block (const int x, const int y, const int width, const int height, const string condition) :
-    Collidable(x, y, height, width)
+Block::Block (const int x, const int y, const int width, const int height, const Condition condition) :
+    Collidable(x, y, height, width, condition)
 {
     this->setSize(sf::Vector2f(width, height));
     this->sf::Shape::setPosition(x, y);
 
-    if (condition == "Regular") Condition condition = Condition::REGULAR;
-    if (condition == "Death") Condition condition = Condition::DEATH;
-    if (condition == "Goal") Condition condition = Condition::GOAL;
     collideVec.push_back(this);
 }
 
