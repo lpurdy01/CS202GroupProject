@@ -403,7 +403,6 @@ Background::Background (const std::string filepath) {
 Background::~Background() { deleteEntity(); }
 
 // -----------------------Block Functions-----------------------------
-Block::Block (const int x, const int y, const int width, const int height) :
 Block::Block (const int x, const int y, const int width, const int height, const string condition) :
     Collidable(x, y, height, width)
 {

@@ -131,7 +131,6 @@ private:
 class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
-    Block (const int x, const int y, const int width, const int height);
     Block (const int x, const int y, const int width, const int height, const string condition = "Regular");
     
     enum Condition { REGULAR, DEATH, GOAL };
