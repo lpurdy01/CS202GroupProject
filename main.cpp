@@ -59,19 +59,16 @@ void runGame (NetworkClient & serverConnection)
     sf::Mutex clientSyncLock;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
-    float windowHeight = desktop.height/1.5;
-    float windowWidth = desktop.width/1.5;
+    float windowHeight = 768;
+    float windowWidth = 1366;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
 
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
 
-    float scaleVal = 1/windowHeight/1.5;
     Character guy("Drawing.png");
-    scaleVal = guy.getLocalBounds().height*scaleVal;
-    std::cout << "scale val: " << scaleVal << std::endl;
-    guy.sf::Sprite::setScale(scaleVal, scaleVal);
-    guy.setGrid(0, guy.getLocalBounds().width*scaleVal, 0, guy.getLocalBounds().height*scaleVal);
+    guy.sf::Sprite::setScale(.25, .25);
+    guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
 
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
