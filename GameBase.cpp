@@ -404,11 +404,15 @@ Background::~Background() { deleteEntity(); }
 
 // -----------------------Block Functions-----------------------------
 Block::Block (const int x, const int y, const int width, const int height) :
+Block::Block (const int x, const int y, const int width, const int height, const string condition) :
     Collidable(x, y, height, width)
 {
     this->setSize(sf::Vector2f(width, height));
     this->sf::Shape::setPosition(x, y);
 
+    if (condition == "Regular") Condition condition = Condition::REGULAR;
+    if (condition == "Death") Condition condition = Condition::DEATH;
+    if (condition == "Goal") Condition condition = Condition::GOAL;
     collideVec.push_back(this);
 }
 

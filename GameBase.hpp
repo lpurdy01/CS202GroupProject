@@ -11,6 +11,8 @@
 using std::vector;
 #include <list>
 using std::list;
+#include <string>
+using std::string;
 
 // -----------------------Clock Class------------------------------
 class Clock : public sf::Clock
@@ -130,11 +132,14 @@ class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
     Block (const int x, const int y, const int width, const int height);
+    Block (const int x, const int y, const int width, const int height, const string condition = "Regular");
+    
+    enum Condition { REGULAR, DEATH, GOAL };
+    void deathBlock();
     
     ~Block();
 private:
+    Condition condition;
 };
-
-
 
 #endif /* GAMEBASE_HPP_INCLUDED */

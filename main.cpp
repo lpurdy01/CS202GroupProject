@@ -73,6 +73,9 @@ void runGame (NetworkClient & serverConnection)
 
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
     ground.setFillColor(sf::Color::Black);
+    
+    Block leftBound(-2,0,1,windowHeight);
+    Block rightBound(windowWidth+1,0,1,windowHeight);
 
     Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
     block1.setFillColor(sf::Color::Black);
