@@ -127,22 +127,34 @@ void runGame (NetworkClient & serverConnection)
     vector<Character> otherCharacters;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
-    int windowHeight = desktop.height/1.5;
-    int windowWidth = desktop.width/1.5;
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "TESTING!");
-    //sf::CircleShape shape(50);
-    //shape.setFillColor(sf::Color::Yellow);
+    float windowHeight = 768;
+    float windowWidth = 1366;
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
 
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
 
     Character guy("Drawing.png");
     guy.sf::Sprite::setScale(.25, .25);
-    std::cout << "width: " << guy.getLocalBounds().width << "  height: " << guy.getLocalBounds().height << std::endl;
+    guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
 
-    //  Background bg("cute_image.jpg");
-    // bg.setScale(2,2);
+
+    Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
+    ground.setFillColor(sf::Color::Black);
+
+    Block leftBound(-2,0,1,windowHeight);
+    Block rightBound(windowWidth+1,0,1,windowHeight);
+
+    Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
+    block1.setFillColor(sf::Color::Black);
+
+    Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
+	block2.setFillColor(sf::Color::Black);
+
+    Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::GOAL);
+	block3.setFillColor(sf::Color::Yellow);
+
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
 
@@ -159,11 +171,51 @@ void runGame (NetworkClient & serverConnection)
 
         window.clear();
         window.draw(bg);
+        window.draw(ground);
         window.draw(guy);
+        window.draw(block1);
+        window.draw(block2);
+        window.draw(block3);
 
         sf::Event event;
 
         guy.updateChar();
+        //std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
+        //guy.setIfDead(true);
+        if (guy.checkIfDead()) {
+            window.clear();
+            sf::Text deathText;
+            sf::Font deathFont;
+            deathFont.loadFromFile("comicbd.ttf");
+            deathText.setFont(deathFont);
+            deathText.setCharacterSize(50);
+            deathText.setFillColor(sf::Color::White);
+            deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
+            deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
+            window.draw(deathText);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+                window.close();
+                runGame(serverConnection);
+            }
+        }
+
+        if (guy.checkIfWin()) {
+		window.clear();
+		sf::Text winText;
+		sf::Font winFont;
+		winFont.loadFromFile("comicbd.ttf");
+		winText.setFont(winFont);
+		winText.setCharacterSize(50);
+		winText.setFillColor(sf::Color::White);
+		winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
+		winText.setPosition(windowWidth / 5, windowHeight / 2 - 50);
+		window.draw(winText);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+		window.close();
+		runGame(serverConnection);
+        }
+        }
+
         clientSyncLock.unlock(); //Allows Threads to edit Variables
 
         while (window.pollEvent(event))

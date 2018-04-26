@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 using std::vector;
+#include <list>
+using std::list;
+#include <string>
+using std::string;
 
 // -----------------------Clock Class------------------------------
 class Clock : public sf::Clock
@@ -34,7 +38,7 @@ private:
     int _yPos;
 };
 
-// ----------------------Collision Class----------------------------
+// -------------------CollisionGrid Class--------------------------
 class CollisionGrid : public sf::Vector2f {
 public:
     CollisionGrid();
@@ -52,19 +56,28 @@ public:
 // ----------------------Collidable Class--------------------------
 class Collidable : public sf::Transformable {
 public:
-    Collidable(const float height, const float width);
+    enum Condition { REGULAR, DEATH, GOAL };
+
+    Collidable(const float height, const float width, const Condition condition = Collidable::REGULAR);
+    Collidable(const float x, const float y, const float height, const float width, const Condition condition = Collidable::REGULAR);
     ~Collidable();
 
-    void updateGrid(const float x1, const float x2, const float y1, const float y2);
+    void setGrid(const float x1, const float x2, const float y1, const float y2);
+    void updateGrid(const float x, const float y);
+
+    string getCondition();
 
     CollisionGrid getGrid();
 
     int getHeight();
     int getWidth();
+
+    static vector<Collidable*> collideVec;
 private:
     const int _height;
     const int _width;
     CollisionGrid _position;
+    Condition _condition;
 };
 
 // ----------------------Character Class----------------------------
@@ -85,12 +98,27 @@ public:
 
     void updateChar();
 
+    bool collideCheck();
+    bool collideX(float moveVal);
+    bool collideY(float moveVal);
+    bool collideLeft();
+    bool collideRight();
+    bool collideTop();
+    bool collideBottom();
+
     void setxPos(int xPos);
     void setyPos(int yPos);
     sf::Int32 getxPos();
     sf::Int32 getyPos();
 
     void transpose(const int &xVal, const int &yVal);
+
+	bool checkIfDead();
+	void setIfDead(bool dead);
+
+    bool checkIfWin();
+    void setIfWin(bool win);
+
 private:
     sf::Texture _texture;
     static vector<Character> charList;
@@ -98,10 +126,13 @@ private:
     int _xPos;
     int _yPos;
 
-    int oneTap = 0;
+    int numJumps = 0;
+    bool secondJump = false;
     double _xVel = 0;
     double _yVel = 0;
     sf::Uint8 _ID= 0;
+	bool _ifDead;
+    bool _ifWin;
 };
 
 // ----------------------Background Class---------------------------
@@ -115,12 +146,15 @@ private:
 };
 
 // -------------------------Block Class------------------------------
-class Block : public Entity, public sf::Shape
+class Block : public Entity, public sf::RectangleShape, public Collidable
 {
 public:
+    Block (const int x, const int y, const int width, const int height, const Condition condition = Collidable::REGULAR);
+
+    void deathBlock();
+
+    ~Block();
 private:
 };
-
-
 
 #endif /* GAMEBASE_HPP_INCLUDED */
