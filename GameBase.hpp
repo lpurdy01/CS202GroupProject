@@ -27,10 +27,6 @@ public:
 
     static void addEntity();
     static void deleteEntity();
-    void setxPos(int xPos);
-    void setyPos(int yPos);
-    sf::Int32 getxPos();
-    sf::Int32 getyPos();
 
 private:
     static int numEntities;
@@ -89,10 +85,18 @@ public:
 
     void updateChar();
 
+    void setxPos(int xPos);
+    void setyPos(int yPos);
+    sf::Int32 getxPos();
+    sf::Int32 getyPos();
+
     void transpose(const int &xVal, const int &yVal);
 private:
     sf::Texture _texture;
     static vector<Character> charList;
+
+    int _xPos;
+    int _yPos;
 
     int oneTap = 0;
     double _xVel = 0;
