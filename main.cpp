@@ -131,6 +131,16 @@ void runGame (NetworkClient & serverConnection)
     float windowWidth = 1366;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
 
+	sf::Font font;
+	font.loadFromFile("times.ttf");
+
+	sf::Text text;
+	text.setFont(font);
+	text.setPosition(200, 200);
+	text.setCharacterSize(50);
+	text.setFillColor(sf::Color::Yellow);
+	text.setString("This is our game!\n Press space to continue");
+
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
 
@@ -166,19 +176,34 @@ void runGame (NetworkClient & serverConnection)
     });
     clientSnc.launch();
 
+	bool checkIfPressedSpace = false;
+
     while (window.isOpen())
     {
         clientSyncLock.lock(); //Stops Threads from editing variables
         //Place any variable manipulation here
 
-        window.clear();
-        window.draw(bg);
-        window.draw(ground);
-        window.draw(guy);
-        window.draw(block1);
-        window.draw(block2);
-        window.draw(block3);
+		if (!checkIfPressedSpace) {
+			window.clear();
+			window.draw(bg);
+			window.draw(ground);
+			window.draw(block1);
+			window.draw(block2);
+			window.draw(block3);
+			window.draw(text);
+		}
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || checkIfPressedSpace == true)
+		{
+			checkIfPressedSpace = true;
+			window.clear();
+			window.draw(bg);
+			window.draw(ground);
+			window.draw(block1);
+			window.draw(block2);
+			window.draw(block3);
+			window.draw(guy);
+		}
         sf::Event event;
 
         guy.updateChar();

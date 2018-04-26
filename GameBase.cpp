@@ -3,17 +3,13 @@
 #include "GameBase.hpp"
 #include <iostream>
 
-int Entity::numEntities = 0;
 vector<Character> charList = { };
 Clock Clock::clock;
 
 // ----------------------Entity Functions----------------------------
-Entity::Entity (const int x, const int y) : _xPos(x),_yPos(y) { addEntity(); }
+Entity::Entity (const int x, const int y) : _xPos(x),_yPos(y) { }
 
-Entity::~Entity() { deleteEntity(); }
-
-void Entity::addEntity() { numEntities++; }
-void Entity::deleteEntity() { numEntities--; }
+Entity::~Entity() { }
 
 // --------------------Collision Functions---------------------------
 
@@ -100,7 +96,6 @@ int Collidable::getWidth()
 Character::Character (std::string filepath) :
     Collidable(0, 0, this->getLocalBounds().height,this->getLocalBounds().width)
 {
-    addEntity();
     if (!_texture.loadFromFile(filepath)) {
         //return EXIT_FAILURE;
     }
@@ -128,7 +123,16 @@ Character::Character (const int x, const int y, const std::string filepath) :
 	setIfDead(false);
 }
 
-Character::~Character() { deleteEntity(); }
+Character::~Character()
+{
+    for (int i = 0; i < collideVec.size(); i++)
+    {
+        if (collideVec[i] == this)
+        {
+            collideVec.erase(collideVec.begin()+i);
+        }
+    }
+}
 
 void Character::setxVel(double xVel) { _xVel = xVel; }
 void Character::setyVel(double yVel) { _yVel = yVel; }
@@ -356,7 +360,7 @@ Background::Background (const std::string filepath) {
     this->setTexture(_texture);
 }
 
-Background::~Background() { deleteEntity(); }
+Background::~Background() { }
 
 // -----------------------Block Functions-----------------------------
 Block::Block (const int x, const int y, const int width, const int height, const Condition condition) :

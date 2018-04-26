@@ -28,12 +28,7 @@ class Entity
 public:
     Entity (const int x = 0, const int y = 0);
     ~Entity();
-
-    static void addEntity();
-    static void deleteEntity();
-
 private:
-    static int numEntities;
     int _xPos;
     int _yPos;
 };
