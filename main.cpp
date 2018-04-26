@@ -80,10 +80,10 @@ void runGame (NetworkClient & serverConnection)
     Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
     block1.setFillColor(sf::Color::Black);
 
-    Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::DEATH);
+    Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
 	block2.setFillColor(sf::Color::Black);
 
-	Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
+    Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::GOAL);
 	block3.setFillColor(sf::Color::Yellow);
 
     //Background bg("cute_image.jpg");
@@ -108,6 +108,7 @@ void runGame (NetworkClient & serverConnection)
         window.draw(guy);
         window.draw(block1);
         window.draw(block2);
+        window.draw(block3);
 
         sf::Event event;
 
@@ -131,8 +132,7 @@ void runGame (NetworkClient & serverConnection)
             }
         }
 
-		/*			----------------FIX ME-------------------
-		if (true) {
+        if (guy.checkIfWin()) {
 		window.clear();
 		sf::Text winText;
 		sf::Font winFont;
@@ -146,12 +146,8 @@ void runGame (NetworkClient & serverConnection)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
 		window.close();
 		runGame(serverConnection);
-		}
-		else
-		window.close();
-		}
-		*/
-
+        }
+        }
 
         clientSyncLock.unlock(); //Allows Threads to edit Variables
 

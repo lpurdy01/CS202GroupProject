@@ -114,6 +114,9 @@ public:
 
 	bool checkIfDead();
 	void setIfDead(bool dead);
+    
+    bool checkIfWin();
+    void setIfWin(bool win);
 
 private:
     sf::Texture _texture;
@@ -125,6 +128,7 @@ private:
     double _yVel = 0;
     sf::Uint8 _ID= 0;
 	bool _ifDead;
+    bool _ifWin;
 };
 
 // ----------------------Background Class---------------------------

@@ -260,6 +260,10 @@ bool Character::collideX(float moveVal)
             {
                 this->setIfDead(true);
             }
+            else if (object->getCondition() == "Goal")
+            {
+                this->setIfWin(true);
+            }
             return true;
         }
     }
@@ -297,6 +301,10 @@ bool Character::collideY(float moveVal)
             {
                 this->setIfDead(true);
             }
+            else if (object->getCondition() == "Goal")
+            {
+                this->setIfWin(true);
+            }
             return true;
         }
     }
@@ -317,6 +325,16 @@ bool Character::checkIfDead()
 void Character::setIfDead(bool dead)
 {
 	_ifDead = dead;
+}
+
+bool Character::checkIfWin()
+{
+    return _ifWin;
+}
+
+void Character::setIfWin(bool win)
+{
+    _ifWin = win;
 }
 
 // --------------------Background Functions---------------------------
