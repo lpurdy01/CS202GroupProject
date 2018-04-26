@@ -104,6 +104,10 @@ public:
     bool collideBottom();
 
     void transpose(const int &xVal, const int &yVal);
+
+	bool checkIfDead();
+	void setIfDead(bool dead);
+
 private:
     sf::Texture _texture;
     static vector<Character> charList;
@@ -113,6 +117,7 @@ private:
     double _xVel = 0;
     double _yVel = 0;
     sf::Uint8 _ID= 0;
+	bool _ifDead;
 };
 
 // ----------------------Background Class---------------------------
