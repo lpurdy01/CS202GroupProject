@@ -33,8 +33,8 @@ void runServer()
             {
                 vector<Character> decodedChars = datapack.decodeCharacters();
                 server.updateCharactersVector(serverCharacters,decodedChars);
-                #if(serverDebug)
-            cout << "Number of Characters in Array: " << serverCharacters.size() << endl;
+#if(serverDebug)
+                cout << "Number of Characters in Array: " << serverCharacters.size() << endl;
 #endif
 #if(serverDebug)
                 for(Character & i:decodedChars)
@@ -54,12 +54,12 @@ void runServer()
 
             if(serverCharacters.size())
             {
-                #if(serverDebug)
+#if(serverDebug)
                 for(Character & i:serverCharacters)
                 {
                     cout << "Character to send ID:  " << i.getID() << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
                 }
-                #endif
+#endif
                 server.sendCharacters(serverCharacters);
 #if(serverDebug)
                 cout << "Sending Characters" << endl;
@@ -82,11 +82,11 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
 
 
             NetworkPackage pack;
-            clientSyncLock.lock();
+            //clientSyncLock.lock();
             pack.encodeCharacter(mainCharacter);
             pack.composePackage();
             serverConnection.send(pack);
-            clientSyncLock.unlock();
+            //clientSyncLock.unlock();
             clientclocksend.restart();
         }
         if(clientclockrecieve.getElapsedTime() > sf::milliseconds(110))
@@ -145,15 +145,15 @@ void runGame (NetworkClient & serverConnection)
     deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
     deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
 
-	sf::Font font;
-	font.loadFromFile("comicbd.ttf");
+    sf::Font font;
+    font.loadFromFile("comicbd.ttf");
 
-	sf::Text text;
-	text.setFont(font);
-	text.setPosition(200, 200);
-	text.setCharacterSize(50);
-	text.setFillColor(sf::Color::Yellow);
-	text.setString("This is our game!\n Press space to continue");
+    sf::Text text;
+    text.setFont(font);
+    text.setPosition(200, 200);
+    text.setCharacterSize(50);
+    text.setFillColor(sf::Color::Yellow);
+    text.setString("This is our game!\n Press space to continue");
 
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
@@ -165,7 +165,12 @@ void runGame (NetworkClient & serverConnection)
     cout << "Client ID: " << (int)clientID << endl;
     guy.setID(clientID);
     cout << "Guy ID: " << (int)(guy.getID()) << endl;
-    
+
+    //Shadow Testing *********************************
+
+
+    //End ****************************
+
     int numChars = 0;
     vector<Character> charVec;
 
@@ -179,10 +184,10 @@ void runGame (NetworkClient & serverConnection)
     block1.setFillColor(sf::Color::Black);
 
     Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
-	block2.setFillColor(sf::Color::Black);
+    block2.setFillColor(sf::Color::Black);
 
     Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10, Collidable::GOAL);
-	block3.setFillColor(sf::Color::Yellow);
+    block3.setFillColor(sf::Color::Yellow);
 
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
     bg.setFillColor(sf::Color::White);
@@ -193,14 +198,31 @@ void runGame (NetworkClient & serverConnection)
     });
     clientSnc.launch();
 
-	bool wait = false;
+    bool wait = false;
+
+    vector<Character> testChar;
+
+    Character testyChar1(-55,0,"Drawing.png");
+    testyChar1.sf::Sprite::setScale(0.25,0.25);
+    testChar.push_back(testyChar1);
+    Character testyChar2(-55,0,"Drawing.png");
+    testyChar2.sf::Sprite::setScale(0.25,0.25);
+    testChar.push_back(testyChar2);
+    Character testyChar3(-55,0,"Drawing.png");
+    testyChar3.sf::Sprite::setScale(0.25,0.25);
+    testChar.push_back(testyChar3);
+    Character testyChar4(-55,0,"Drawing.png");
+    testyChar4.sf::Sprite::setScale(0.25,0.25);
+    testChar.push_back(testyChar4);
+
+
 
     while (window.isOpen())
     {
-        clientSyncLock.lock(); //Stops Threads from editing variables
+        //clientSyncLock.lock(); //Stops Threads from editing variables
         //Place any variable manipulation here
 
-        
+
         sf::Event event;
         window.clear();
         window.draw(text);
@@ -214,26 +236,71 @@ void runGame (NetworkClient & serverConnection)
             for (int i = 0; i < otherCharacters.size(); i++)
             {
                 std::cout << "updating characters" << endl;
-                serverConnection.updateCharactersVector(charVec, otherCharacters);
-                charVec[i].sf::Sprite::setScale(.25, .25);
+
+                //serverConnection.updateCharactersVector(charVec, otherCharacters);
+                //Character shadow(10,10,"Drawing.png");
+                //shadow.sf::Sprite::setScale(0.25,0.25);
+                //shadow.setID(numChars+1);
+                //charVec.push_back(shadow);
+                //charVec[i].sf::Sprite::setScale(.25, .25);
                 numChars++;
             }
         }
-        
+
         window.clear();
         window.draw(bg);
         window.draw(ground);
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
-
-        for(int i = 0; i < charVec.size(); i++)
+        /*
+        if(refreshTime.getElapsedTime() > sf::milliseconds(100))
         {
-            charVec[i].sf::Sprite::move(
-                                        otherCharacters[i].sf::Sprite::getPosition().x - charVec[i].sf::Sprite::getPosition().x,
-                                        otherCharacters[i].sf::Sprite::getPosition().y - charVec[i].sf::Sprite::getPosition().y);
-            window.draw(charVec[i]);
+            for(int i = 0; i < charVec.size(); i++)
+            {
+                charVec[i].sf::Sprite::move(
+                    otherCharacters[i].sf::Sprite::getPosition().x - charVec[i].sf::Sprite::getPosition().x,
+                    otherCharacters[i].sf::Sprite::getPosition().y - charVec[i].sf::Sprite::getPosition().y);
+
+                window.draw(charVec[i]);
+            }
+            refreshTime.restart();
         }
+
+        for(Character & i:charVec)
+        {
+            i.updateChar();
+            window.draw(i);
+        }*/
+
+        if(refreshTime.getElapsedTime() > sf::milliseconds(20))
+        {
+            //shadow.sf::Sprite::move(otherCharacters[0].sf::Sprite::getPosition().x,otherCharacters[0].sf::Sprite::getPosition().y);
+            //cout << otherCharacters.size() << endl;
+            if(otherCharacters.size() >= 1)
+            {
+                //cout << "Setting X pos: " << otherCharacters[0].getxPos() <<endl;
+                for(int i = 0; i < otherCharacters.size(); i++)
+                {
+                    testChar[i].setxPos(otherCharacters[i].getxPos());
+                    testChar[i].setyPos(otherCharacters[i].getyPos());
+                }
+
+                //cout << "Ypos: " << charVec[0].getyPos() << endl;
+            }
+            refreshTime.restart();
+        }
+        //if(charVec.size()>= 1){
+        //cout << "Drawing Character from vector" << endl;
+        //window.draw(charVec[0]);
+        //cout << "Ypos: " << charVec[0].getyPos() << endl;
+        //}
+        for(auto & i:testChar)
+        {
+            window.draw(i);
+        }
+        //window.draw(testChar[0]);
+
         window.draw(guy);
 
         guy.updateChar();
@@ -269,7 +336,7 @@ void runGame (NetworkClient & serverConnection)
             }
         }
 
-        clientSyncLock.unlock(); //Allows Threads to edit Variables
+        //clientSyncLock.unlock(); //Allows Threads to edit Variables
 
         while (window.pollEvent(event))
         {
