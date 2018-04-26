@@ -83,6 +83,9 @@ void runGame (NetworkClient & serverConnection)
 	Block block2(windowWidth / 2, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
 	block2.setFillColor(sf::Color::Black);
 
+	Block block3(3*windowWidth / 4, windowHeight - windowHeight / 2, windowWidth / 8, windowHeight / 10);
+	block3.setFillColor(sf::Color::Yellow);
+
     //Background bg("cute_image.jpg");
     //bg.setScale(2,2);
     sf::RectangleShape bg(sf::Vector2f(windowWidth,windowHeight));
@@ -105,12 +108,13 @@ void runGame (NetworkClient & serverConnection)
 			window.draw(guy);
 			window.draw(block1);
 			window.draw(block2);
-
+			window.draw(block3);
 			sf::Event event;
 
 			guy.updateChar();
 			//std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
 			//guy.setIfDead(true);
+
 			if (guy.checkIfDead()) {
 				window.clear();
 				sf::Text deathText;
@@ -128,6 +132,27 @@ void runGame (NetworkClient & serverConnection)
 				}
 			}
 
+
+/*			----------------FIX ME-------------------
+			if (true) {
+				window.clear();
+				sf::Text winText;
+				sf::Font winFont;
+				winFont.loadFromFile("comicbd.ttf");
+				winText.setFont(winFont);
+				winText.setCharacterSize(50);
+				winText.setFillColor(sf::Color::White);
+				winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
+				winText.setPosition(windowWidth / 5, windowHeight / 2 - 50);
+				window.draw(winText);
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+					window.close();
+					runGame(serverConnection);
+				}
+				else
+				window.close();
+			}
+ */
 			clientSyncLock.unlock(); //Allows Threads to edit Variables
 
 			while (window.pollEvent(event))
