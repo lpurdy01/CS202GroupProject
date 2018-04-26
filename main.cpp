@@ -295,10 +295,15 @@ void runGame (NetworkClient & serverConnection)
         //window.draw(charVec[0]);
         //cout << "Ypos: " << charVec[0].getyPos() << endl;
         //}
-        for(auto & i:testChar)
+        
+        for(int i = 0; i < otherCharacters.size(); i++)
         {
-            window.draw(i);
+            if(i != clientID-1)
+            {
+                window.draw(testChar[i]);
+            }
         }
+        
         //window.draw(testChar[0]);
 
         window.draw(guy);
