@@ -61,7 +61,7 @@ void runGame (NetworkClient & serverConnection)
     Clock::clock.restart();
     int windowHeight = desktop.height/1.5;
     int windowWidth = desktop.width/1.5;
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "TESTING!");
+    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
 
     //system("dir"); //Place Game Resources in this path
     auto clientID = serverConnection.clientSquak();
@@ -70,10 +70,10 @@ void runGame (NetworkClient & serverConnection)
     guy.sf::Sprite::setScale(.25, .25);
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     guy.setID(clientID);
-    
+
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
     ground.setFillColor(sf::Color::Black);
-    
+
     Block block1(windowHeight/2,windowHeight-windowHeight/5.33,windowHeight/10,windowHeight/10);
     block1.setFillColor(sf::Color::Black);
 
