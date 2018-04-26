@@ -48,7 +48,7 @@ void runServer()
                 cout << "Recieved ID Request... This is a problem" << endl;
             }
         }
-        if(clock.getElapsedTime() > sf::milliseconds(80))
+        if(clock.getElapsedTime() > sf::milliseconds(100))
         {
             server.acceptClient(false);
 
@@ -134,12 +134,12 @@ void runGame (NetworkClient & serverConnection)
     sf::Clock scaleTime;
     float winH = 768;
     float winW = 1366;
-    
+
     float inc = 128;
     float stdBlock = 64;
-    
+
     sf::View view;
-    
+
     sf::RenderWindow window(sf::VideoMode(winW, winH), "hElP Me!");
 
     //system("dir"); //Place Game Resources in this path
@@ -149,18 +149,18 @@ void runGame (NetworkClient & serverConnection)
     Collidable::collideVec.push_back(&guy);
     float charW = guy.getLocalBounds().width / 5;
     float charH = guy.getLocalBounds().height / 5;
-    
+
     guy.sf::Sprite::setScale(charW/guy.getLocalBounds().width, charH/guy.getLocalBounds().height);
-    
+
     float spawnY = 30*inc - charH - stdBlock - 1;
     guy.sf::Sprite::setPosition(0, spawnY);
     guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
-    
+
     sf::RectangleShape bg;
     bg.setSize(sf::Vector2f(50*inc, 50*inc));
     bg.setPosition(-5*inc, -5*inc);
     bg.setFillColor(sf::Color::White);
-    
+
     Block edge1(-stdBlock,20*inc,stdBlock,10*inc);
     Block edge2(0, 30*inc - stdBlock, 8*inc, stdBlock);
     Block edge3(8*inc, 25*inc, stdBlock, 5*inc);
@@ -178,7 +178,7 @@ void runGame (NetworkClient & serverConnection)
     Block edge15(25*inc, 8*inc, stdBlock, 17*inc);
     Block edge16(20*inc - stdBlock, 8*inc, stdBlock, 5*inc);
     Block edge17(20*inc-stdBlock, 8*inc - stdBlock, 6*inc, stdBlock);
-    
+
     Block block1(inc, 28*inc, 4*inc, stdBlock);
     Block block2(4*inc, 27*inc - stdBlock, 3*inc, stdBlock);
     Block block3(inc, 23*inc, 3*inc, inc);
@@ -216,7 +216,7 @@ void runGame (NetworkClient & serverConnection)
     Block block35(23*inc + stdBlock, 16*inc + stdBlock, stdBlock, stdBlock);
     Block block36(21*inc + stdBlock, 14*inc, stdBlock, stdBlock);
     Block block37(20*inc + stdBlock, 12*inc + stdBlock, 2*inc + stdBlock, stdBlock);
-    
+
     Block death1(6*inc, inc, 2*inc, stdBlock, Collidable::DEATH);
     Block death2(2*inc, 21*inc, inc, inc, Collidable::DEATH);
     Block death3(inc, 25*inc-stdBlock, 2*inc, 2*inc, Collidable::DEATH);
@@ -240,9 +240,9 @@ void runGame (NetworkClient & serverConnection)
     Block death21(23*inc + stdBlock, 13*inc, inc + stdBlock, stdBlock, Collidable::DEATH);
     Block death22(23*inc + stdBlock, 9*inc, stdBlock, stdBlock, Collidable::DEATH);
     Block death23(23*inc, 9*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
-    
+
     Block win1(21*inc, 8*inc, inc, stdBlock, Collidable::GOAL);
-    
+
     sf::Text deathText;
     sf::Font comicFont;
     comicFont.loadFromFile("comicbd.ttf");
@@ -251,23 +251,23 @@ void runGame (NetworkClient & serverConnection)
     deathText.setFillColor(sf::Color::White);
     deathText.setString("YOU HAVE DIED. PRESS ENTER TO TRY AGAIN");
     deathText.setPosition(-4*inc, 30*inc - charH - stdBlock);
-    
+
     sf::Text winText;
     winText.setFont(comicFont);
     winText.setCharacterSize(45);
     winText.setFillColor(sf::Color::White);
     winText.setString("CONGRATULATIONS, YOU WON!\n PRESS ENTER TO PLAY AGAIN");
     winText.setPosition(-3*inc, 30*inc - charH - stdBlock);
-    
+
     sf::Text introText;
     introText.setFont(comicFont);
     introText.setCharacterSize(45);
     introText.setFillColor(sf::Color::White);
     introText.setString("      THIS IS OUR GAME!\nPRESS RETURN TO CONTINUE");
     introText.setPosition(-3*inc, 30*inc - charH - stdBlock);
-    
+
     view.setSize(winW/1.2, winH/1.2);
-    
+
     cout << "Client ID: " << (int)clientID << endl;
     guy.setID(clientID);
     cout << "Guy ID: " << (int)(guy.getID()) << endl;
@@ -322,7 +322,7 @@ void runGame (NetworkClient & serverConnection)
 
         window.clear();
         window.draw(bg);
-        
+
         window.draw(edge1);
         window.draw(edge2);
         window.draw(edge3);
@@ -340,7 +340,7 @@ void runGame (NetworkClient & serverConnection)
         window.draw(edge15);
         window.draw(edge16);
         window.draw(edge17);
-        
+
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
@@ -378,7 +378,7 @@ void runGame (NetworkClient & serverConnection)
         window.draw(block35);
         window.draw(block36);
         window.draw(block37);
-        
+
         window.draw(death1);
         window.draw(death2);
         window.draw(death3);
@@ -402,7 +402,7 @@ void runGame (NetworkClient & serverConnection)
         window.draw(death21);
         window.draw(death22);
         window.draw(death23);
-        
+
         window.draw(win1);
 
         if(refreshTime.getElapsedTime() > sf::milliseconds(20))
@@ -417,7 +417,7 @@ void runGame (NetworkClient & serverConnection)
             }
             refreshTime.restart();
         }
-        
+
         for(int i = 0; i < otherCharacters.size(); i++)
         {
             if(i != clientID-1)
@@ -436,7 +436,7 @@ void runGame (NetworkClient & serverConnection)
             guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
             view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
             window.setView(view);
-            
+
             window.draw(deathText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
@@ -451,14 +451,14 @@ void runGame (NetworkClient & serverConnection)
             guy.setGrid(1, charW + 1, spawnY, spawnY + charH);
             view.setCenter(guy.sf::Sprite::getPosition().x + charW/2, guy.sf::Sprite::getPosition().y + charH/2);
             window.setView(view);
-            
+
             window.draw(winText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
                 guy.setIfWin(0);
             }
         }
-        
+
         if (startOfGame)
         {
             window.clear();

@@ -49,7 +49,7 @@ protected:
 class NetworkClient
 {
 public:
-    int connect(string ip , int port = 53000);
+    int connect(string ip , int port = 80);
     int send(sf::Packet packet);
     sf::Uint8 clientSquak();
     bool recieve(vector<Character> & characters);
@@ -68,7 +68,7 @@ class NetworkServer
 {
 public:
     int prepare();
-    int listen(int port = 53000);
+    int listen(int port = 80);
     int acceptClient(bool blocking);
     bool recieve(sf::Packet & pack);
     //sf::Packet recieve(bool Blocking = true);
