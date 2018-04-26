@@ -28,12 +28,7 @@ class Entity
 public:
     Entity (const int x = 0, const int y = 0);
     ~Entity();
-
-    static void addEntity();
-    static void deleteEntity();
-
 private:
-    static int numEntities;
     int _xPos;
     int _yPos;
 };
@@ -131,8 +126,8 @@ private:
     double _xVel = 0;
     double _yVel = 0;
     sf::Uint8 _ID= 0;
-	bool _ifDead;
-    bool _ifWin;
+	bool _ifDead = 0;
+    bool _ifWin = 0;
 };
 
 // ----------------------Background Class---------------------------

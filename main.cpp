@@ -8,7 +8,7 @@
 #include "Network.hpp"
 
 #define serverDebug 0
-#define clientRecieveDebug 1
+#define clientRecieveDebug 0
 
 
 

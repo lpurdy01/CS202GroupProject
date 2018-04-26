@@ -234,7 +234,7 @@ sf::Uint8 NetworkClient::clientSquak()
     socket.send(dataPack);
     dataPack = recieve(true);
     dataPack >> packetType;
-    if(packetType = ClientIDPacket)
+    if(packetType == ClientIDPacket)
     {
         sf::Uint8 charID;
         dataPack >> charID;
