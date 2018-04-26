@@ -121,6 +121,7 @@ int NetworkServer::acceptClient(bool blocking)
             cout << "Accepting New Client" << endl;
             cout << "Found Client: " << goodClients.back().getRemoteAddress() << endl;
             sf::Packet clientSquak;
+            goodClients.back().setBlocking(true);
             goodClients.back().receive(clientSquak);
             if(handleClientSquak(clientSquak, goodClients.back()))
             {
