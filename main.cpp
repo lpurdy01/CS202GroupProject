@@ -8,7 +8,7 @@
 #include "Network.hpp"
 
 #define serverDebug 0
-#define clientRecieveDebug 0
+#define clientRecieveDebug 1
 
 
 
@@ -109,7 +109,7 @@ void clientSync( NetworkClient & serverConnection, Character & mainCharacter, sf
                     clientSyncLock.unlock();
 #if(clientRecieveDebug)
                     cout << "Recieved Character Package From Server" << endl;
-                    for(auto & i:decodedChars)
+                    for(auto & i:otherCharacters)
                     {
                         cout << "Client Side: ID:  " << (int)(i.getID()) << " XCor: " << i.getxPos() << " YCor: " << i.getyPos() << endl;
                     }
