@@ -53,6 +53,7 @@ class Collidable : public sf::Transformable {
 public:
     enum Condition { REGULAR, DEATH, GOAL };
 
+    Collidable();
     Collidable(const float height, const float width, const Condition condition = Collidable::REGULAR);
     Collidable(const float x, const float y, const float height, const float width, const Condition condition = Collidable::REGULAR);
     ~Collidable();

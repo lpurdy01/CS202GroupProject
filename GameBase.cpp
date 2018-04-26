@@ -26,6 +26,8 @@ CollisionGrid::~CollisionGrid()
 // -------------------Collidable Functions---------------------------
 vector<Collidable*> Collidable::collideVec = {};
 
+Collidable::Collidable() : _height(0), _width(0) { }
+
 Collidable::Collidable(const float height, const float width, const Condition condition) :
     _height(height), _width(width), _condition(condition)
 {
@@ -93,8 +95,7 @@ int Collidable::getWidth()
 }
 
 // --------------------Character Functions---------------------------
-Character::Character (std::string filepath) :
-    Collidable(0, 0, this->getLocalBounds().height,this->getLocalBounds().width)
+Character::Character (std::string filepath) : Collidable(0, 0, this->getLocalBounds().height,this->getLocalBounds().width)
 {
     if (!_texture.loadFromFile(filepath)) {
         //return EXIT_FAILURE;
@@ -102,14 +103,12 @@ Character::Character (std::string filepath) :
     this->setTexture(_texture);
     this->setGrid(0,this->getLocalBounds().width,0,this->getLocalBounds().height);
 
-    collideVec.push_back(this);
 	setIfDead(false);
 }
 
 Character::Character (const int x, const int y, const std::string filepath) :
     Entity::Entity(x,y),
     Collidable(x, y, this->getLocalBounds().height,this->getLocalBounds().width)
-
 {
     if (!_texture.loadFromFile(filepath)) {
         //return EXIT_FAILURE;
@@ -119,7 +118,6 @@ Character::Character (const int x, const int y, const std::string filepath) :
 
     this->setGrid(x,x+this->getLocalBounds().width,y,y+this->getLocalBounds().height);
 
-    collideVec.push_back(this);
 	setIfDead(false);
 }
 
@@ -146,7 +144,6 @@ void Character::updateChar() {
     {
         moveFactor = 100; //sprinting
     }
-
 
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) // stop movement if left and right
     {

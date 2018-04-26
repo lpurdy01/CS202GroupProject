@@ -127,6 +127,7 @@ void runGame (NetworkClient & serverConnection)
     vector<Character> otherCharacters;
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
+    sf::Clock refreshTime;
     float windowHeight = 768;
     float windowWidth = 1366;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
@@ -155,11 +156,13 @@ void runGame (NetworkClient & serverConnection)
 
     Character guy("Drawing.png");
     guy.sf::Sprite::setScale(.25, .25);
+    Collidable::collideVec.push_back(&guy);
     guy.setGrid(0, guy.getLocalBounds().width*.25, 0, guy.getLocalBounds().height*.25);
     cout << "Client ID: " << (int)clientID << endl;
     guy.setID(clientID);
     cout << "Guy ID: " << (int)(guy.getID()) << endl;
-
+    
+    vector<Character> charVec;
 
     Block ground(0,windowHeight-windowHeight/10,windowWidth,windowHeight/10);
     ground.setFillColor(sf::Color::Black);
@@ -192,6 +195,7 @@ void runGame (NetworkClient & serverConnection)
         clientSyncLock.lock(); //Stops Threads from editing variables
         //Place any variable manipulation here
 
+        
         sf::Event event;
         window.clear();
         window.draw(text);
@@ -200,6 +204,11 @@ void runGame (NetworkClient & serverConnection)
 //        {
 //            wait = false;
 //        }
+        if (refreshTime.getElapsedTime() > sf::milliseconds(20))
+        {
+            serverConnection.updateCharactersVector(charVec, otherCharacters);
+            refreshTime.restart();
+        }
 
         window.clear();
         window.draw(bg);
@@ -207,10 +216,10 @@ void runGame (NetworkClient & serverConnection)
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
-        for(int i = 0; i < otherCharacters.size(); i++)
+        for(int i = 0; i < charVec.size(); i++)
         {
-            otherCharacters[i].sf::Sprite::setScale(.25, .25);
-            window.draw(otherCharacters[i]);
+            charVec[i].sf::Sprite::setScale(.25, .25);
+            window.draw(charVec[i]);
         }
 
         window.draw(guy);
@@ -242,15 +251,9 @@ void runGame (NetworkClient & serverConnection)
             window.draw(winText);
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
-                window.close();
-//                for (int i = 0; i < Collidable::collideVec.size(); i++)
-//                {
-//                    if (Collidable::collideVec[i] == &guy)
-//                    {
-//                        Collidable::collideVec.erase(Collidable::collideVec.begin()+i);
-//                    }
-//                }
-                runGame(serverConnection);
+                guy.updateGrid(-guy.sf::Sprite::getPosition().x, -guy.sf::Sprite::getPosition().y);
+                guy.sf::Sprite::setPosition(0, 0);
+                guy.setIfWin(0);
             }
         }
 
