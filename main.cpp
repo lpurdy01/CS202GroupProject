@@ -8,7 +8,7 @@
 #include "Network.hpp"
 
 #define serverDebug 0
-#define clientRecieveDebug 1
+#define clientRecieveDebug 0
 
 
 
@@ -207,8 +207,14 @@ void runGame (NetworkClient & serverConnection)
         window.draw(block1);
         window.draw(block2);
         window.draw(block3);
-        window.draw(guy);
+        for(int i = 0; i < otherCharacters.size(); i++)
+        {
+            otherCharacters[i].sf::Sprite::setScale(.25, .25);
+            window.draw(otherCharacters[i]);
+        }
 
+        window.draw(guy);
+        
         guy.updateChar();
             
         if (guy.checkIfDead())
@@ -237,6 +243,13 @@ void runGame (NetworkClient & serverConnection)
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
             {
                 window.close();
+//                for (int i = 0; i < Collidable::collideVec.size(); i++)
+//                {
+//                    if (Collidable::collideVec[i] == &guy)
+//                    {
+//                        Collidable::collideVec.erase(Collidable::collideVec.begin()+i);
+//                    }
+//                }
                 runGame(serverConnection);
             }
         }

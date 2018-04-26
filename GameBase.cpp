@@ -124,15 +124,7 @@ Character::Character (const int x, const int y, const std::string filepath) :
 }
 
 Character::~Character()
-{
-    for (int i = 0; i < collideVec.size(); i++)
-    {
-        if (collideVec[i] == this)
-        {
-            collideVec.erase(collideVec.begin()+i);
-        }
-    }
-}
+{}
 
 void Character::setxVel(double xVel) { _xVel = xVel; }
 void Character::setyVel(double yVel) { _yVel = yVel; }
