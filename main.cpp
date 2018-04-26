@@ -107,16 +107,22 @@ void runGame (NetworkClient & serverConnection)
 
 			guy.updateChar();
 			//std::cout << "Block: x1: " << block1.getGrid().x1 << ", x2: " << block1.getGrid().x2 << ", y1: " << block1.getGrid().y1 << ", y2: " << block1.getGrid().y2 << std::endl;
-			guy.setIfDead(true);
+			//guy.setIfDead(true);
 			if (guy.checkIfDead()) {
 				window.clear();
-				sf::Text text;
-				sf::Font font;
-				text.setFont(font);
-				text.setCharacterSize(50);
-				text.setFillColor(sf::Color::White);
-				text.setString("YOU ARE DEAD. TRY AGAIN?");
-				window.draw(text);
+				sf::Text deathText;
+				sf::Font deathFont;
+				deathFont.loadFromFile("comicbd.ttf");
+				deathText.setFont(deathFont);
+				deathText.setCharacterSize(50);
+				deathText.setFillColor(sf::Color::White);
+				deathText.setString("YOU ARE DEAD. PRESS ENTER TO TRY AGAIN");
+				deathText.setPosition(windowWidth / 25, windowHeight / 2 - 50);
+				window.draw(deathText);
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
+					window.close();
+					runGame(serverConnection);
+				}
 			}
 
 			clientSyncLock.unlock(); //Allows Threads to edit Variables
