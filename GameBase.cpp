@@ -100,6 +100,7 @@ Character::Character (std::string filepath) :
     this->setGrid(0,this->getLocalBounds().width,0,this->getLocalBounds().height);
 
     collideVec.push_back(this);
+	setIfDead(false);
 }
 
 Character::Character (const int x, const int y, const std::string filepath) :
@@ -116,6 +117,7 @@ Character::Character (const int x, const int y, const std::string filepath) :
     this->setGrid(x,x+this->getLocalBounds().width,y,y+this->getLocalBounds().height);
 
     collideVec.push_back(this);
+	setIfDead(false);
 }
 
 Character::~Character() { deleteEntity(); }
@@ -285,6 +287,16 @@ void Character::transpose(const int &x, const int &y) {
     setxPos(x+getxPos());
     setyPos(y+getyPos());
     this->sf::Sprite::setPosition(getxPos(), getyPos());
+}
+
+bool Character::checkIfDead()
+{
+	return _ifDead;
+}
+
+void Character::setIfDead(bool dead)
+{
+	_ifDead = dead;
 }
 
 // --------------------Background Functions---------------------------
