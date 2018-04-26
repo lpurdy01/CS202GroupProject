@@ -13,6 +13,9 @@ using std::vector;
 using std::list;
 #include <string>
 using std::string;
+#include <tuple>
+using std::tuple;
+using std::get;
 
 // -----------------------Clock Class------------------------------
 class Clock : public sf::Clock
@@ -51,7 +54,7 @@ public:
 // ----------------------Collidable Class--------------------------
 class Collidable : public sf::Transformable {
 public:
-    enum Condition { REGULAR, DEATH, GOAL };
+    enum Condition { REGULAR, DEATH, GOAL, TELEPORT };
 
     Collidable();
     Collidable(const float height, const float width, const Condition condition = Collidable::REGULAR);
@@ -60,20 +63,30 @@ public:
 
     void setGrid(const float x1, const float x2, const float y1, const float y2);
     void updateGrid(const float x, const float y);
+    void setGridCorner(const float x, const float y);
 
-    string getCondition();
+    void setCondition(const Condition condition);
+    tuple<Condition, float, float> getCondition();
 
     CollisionGrid getGrid();
 
-    int getHeight();
-    int getWidth();
+    float getHeight();
+    float getWidth();
 
+    void setTeleportX(float xCor);
+    void setTeleportY(float yCor);
+    float getTeleportX();
+    float getTeleportY();
+    
     static vector<Collidable*> collideVec;
 private:
-    const int _height;
-    const int _width;
+    const float _height;
+    const float _width;
     CollisionGrid _position;
     Condition _condition;
+    
+    float _teleportXCoor;
+    float _teleportYCoor;
 };
 
 // ----------------------Character Class----------------------------
@@ -97,6 +110,7 @@ public:
     bool collideX(float moveVal);
     bool collideY(float moveVal);
     bool standing(float moveVal);
+    void blockTrigger(tuple<Collidable::Condition, float, float>);
 
     void setxPos(int xPos);
     void setyPos(int yPos);
@@ -148,6 +162,14 @@ public:
     void deathBlock();
 
     ~Block();
+private:
+};
+
+class TeleportBlock : public Block
+{
+public:
+    TeleportBlock (const int x, const int y, const int width, const int height, const float xCor, const float yCor);
+    
 private:
 };
 

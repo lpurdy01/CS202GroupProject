@@ -162,8 +162,8 @@ void runGame (NetworkClient & serverConnection)
     bg.setFillColor(sf::Color::White);
 
     Block edge1(-stdBlock,20*inc,stdBlock,10*inc);
-    Block edge2(0, 30*inc - stdBlock, 8*inc, stdBlock);
-    Block edge3(8*inc, 25*inc, stdBlock, 5*inc);
+    Block edge2(0, 30*inc - stdBlock, 8*inc + stdBlock, stdBlock);
+    Block edge3(8*inc, 25*inc, stdBlock, 4*inc - stdBlock);
     Block edge4(8*inc, 25*inc, 4*inc, stdBlock);
     Block edge5(12*inc, 15*inc, inc, 10*inc+stdBlock);
     Block edge6(-stdBlock, 20*inc - stdBlock, 6*inc, stdBlock);
@@ -179,6 +179,31 @@ void runGame (NetworkClient & serverConnection)
     Block edge16(20*inc - stdBlock, 8*inc, stdBlock, 5*inc);
     Block edge17(20*inc-stdBlock, 8*inc - stdBlock, 6*inc, stdBlock);
 
+    Block death1(6*inc, inc, 2*inc, stdBlock, Collidable::DEATH);
+    TeleportBlock death2(2*inc, 21*inc, inc, inc,20*inc + 2,8*inc + 2);
+    death2.setFillColor(sf::Color::Red);
+    Block death3(inc, 25*inc-stdBlock, 2*inc, 2*inc, Collidable::DEATH);
+    Block death4(7*inc, 21*inc, 2*inc, stdBlock, Collidable::DEATH);
+    Block death5(10*inc, 13*inc, inc, stdBlock, Collidable::DEATH);
+    Block death6(20*inc, 19*inc, 5*inc, stdBlock, Collidable::DEATH);
+    Block death7(0, 28*inc, inc, stdBlock, Collidable::DEATH);
+    Block death8(7*inc, 25*inc, inc, stdBlock, Collidable::DEATH);
+    Block death9(4*inc + stdBlock, 23*inc, stdBlock, stdBlock, Collidable::DEATH);
+    Block death10(5*inc, 20*inc, stdBlock, inc, Collidable::DEATH);
+    Block death11(8*inc, 25*inc - stdBlock, 3*inc, stdBlock, Collidable::DEATH);
+    Block death12(9*inc, 16*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
+    Block death13(10*inc + stdBlock, 15*inc, stdBlock, 2*inc, Collidable::DEATH);
+    Block death14(6*inc, 9*inc, stdBlock, inc, Collidable::DEATH);
+    Block death15(5*inc, 7*inc, 2*inc - stdBlock, stdBlock, Collidable::DEATH);
+    Block death16(13*inc, 15*inc, stdBlock, stdBlock, Collidable::DEATH);
+    Block death17(14*inc, 14*inc, stdBlock, inc + stdBlock, Collidable::DEATH);
+    Block death18(23*inc, 16*inc - stdBlock, stdBlock, inc + stdBlock, Collidable::DEATH);
+    Block death19(24*inc, 16*inc - stdBlock, stdBlock, inc + stdBlock, Collidable::DEATH);
+    Block death20(20*inc + stdBlock, 14*inc, inc, stdBlock, Collidable::DEATH);
+    Block death21(23*inc + stdBlock, 13*inc, inc + stdBlock, stdBlock, Collidable::DEATH);
+    Block death22(23*inc + stdBlock, 9*inc, stdBlock, stdBlock, Collidable::DEATH);
+    Block death23(23*inc, 9*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
+    
     Block block1(inc, 28*inc, 4*inc, stdBlock);
     Block block2(4*inc, 27*inc - stdBlock, 3*inc, stdBlock);
     Block block3(inc, 23*inc, 3*inc, inc);
@@ -217,31 +242,18 @@ void runGame (NetworkClient & serverConnection)
     Block block36(21*inc + stdBlock, 14*inc, stdBlock, stdBlock);
     Block block37(20*inc + stdBlock, 12*inc + stdBlock, 2*inc + stdBlock, stdBlock);
 
-    Block death1(6*inc, inc, 2*inc, stdBlock, Collidable::DEATH);
-    Block death2(2*inc, 21*inc, inc, inc, Collidable::DEATH);
-    Block death3(inc, 25*inc-stdBlock, 2*inc, 2*inc, Collidable::DEATH);
-    Block death4(7*inc, 21*inc, 2*inc, stdBlock, Collidable::DEATH);
-    Block death5(10*inc, 13*inc, inc, stdBlock, Collidable::DEATH);
-    Block death6(20*inc, 19*inc, 5*inc, stdBlock, Collidable::DEATH);
-    Block death7(0, 28*inc, inc, stdBlock, Collidable::DEATH);
-    Block death8(7*inc, 25*inc, inc, stdBlock, Collidable::DEATH);
-    Block death9(4*inc + stdBlock, 23*inc, stdBlock, stdBlock, Collidable::DEATH);
-    Block death10(5*inc, 20*inc, stdBlock, inc, Collidable::DEATH);
-    Block death11(8*inc, 25*inc - stdBlock, 3*inc, stdBlock, Collidable::DEATH);
-    Block death12(9*inc, 16*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
-    Block death13(10*inc + stdBlock, 15*inc, stdBlock, 2*inc, Collidable::DEATH);
-    Block death14(6*inc, 9*inc, stdBlock, inc, Collidable::DEATH);
-    Block death15(5*inc, 7*inc, 2*inc - stdBlock, stdBlock, Collidable::DEATH);
-    Block death16(13*inc, 15*inc, stdBlock, stdBlock, Collidable::DEATH);
-    Block death17(14*inc, 14*inc, stdBlock, inc + stdBlock, Collidable::DEATH);
-    Block death18(23*inc, 16*inc - stdBlock, stdBlock, inc + stdBlock, Collidable::DEATH);
-    Block death19(24*inc, 16*inc - stdBlock, stdBlock, inc + stdBlock, Collidable::DEATH);
-    Block death20(20*inc + stdBlock, 14*inc, inc, stdBlock, Collidable::DEATH);
-    Block death21(23*inc + stdBlock, 13*inc, inc + stdBlock, stdBlock, Collidable::DEATH);
-    Block death22(23*inc + stdBlock, 9*inc, stdBlock, stdBlock, Collidable::DEATH);
-    Block death23(23*inc, 9*inc + stdBlock, stdBlock, inc, Collidable::DEATH);
-
     Block win1(21*inc, 8*inc, inc, stdBlock, Collidable::GOAL);
+    
+    sf::RectangleShape fake1(sf::Vector2f(stdBlock,inc));
+    fake1.setPosition(7*inc, 29*inc - stdBlock);
+    fake1.setFillColor(sf::Color::Red);
+    
+    sf::RectangleShape fake2(sf::Vector2f(stdBlock,inc));
+    fake2.setPosition(8*inc, 29*inc - stdBlock);
+    fake2.setFillColor(sf::Color::Black);
+    Block fake3(8*inc, 30*inc - stdBlock, 20*inc, stdBlock);
+    
+    TeleportBlock teleport1(8*inc + stdBlock, 29*inc - stdBlock, stdBlock, inc, 22*inc + 1,8*inc + 1);
 
     sf::Text deathText;
     sf::Font comicFont;
@@ -402,6 +414,9 @@ void runGame (NetworkClient & serverConnection)
         window.draw(death21);
         window.draw(death22);
         window.draw(death23);
+        
+        window.draw(fake1);
+        window.draw(fake2);
 
         window.draw(win1);
 

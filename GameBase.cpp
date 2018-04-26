@@ -47,15 +47,28 @@ Collidable::Collidable(const float x, const float y, const float height, const f
     _position.y2 = this->getPosition().y + (float)getHeight();
 }
 
-string Collidable::getCondition()
+void Collidable::setCondition(const Condition condition)
 {
-    if (_condition == Condition::REGULAR)
-        return "Regular";
-    else if (_condition == Condition::DEATH)
-        return "Death";
-    else if (_condition == Condition::GOAL)
-        return "Goal";
+    _condition = condition;
+}
 
+tuple<Collidable::Condition, float, float> Collidable::getCondition()
+{
+//    if (_condition == Condition::REGULAR)
+//        return _condition;
+//    else if (_condition == Condition::DEATH)
+//        return "Death";
+//    else if (_condition == Condition::GOAL)
+//        return "Goal";
+//
+    float x = 0;
+    float y = 0;
+    if (_condition == Collidable::TELEPORT)
+    {
+        x = this->getTeleportX();
+        y = this->getTeleportY();
+    }
+    return std::make_tuple(_condition,x,y);
 }
 
 Collidable::~Collidable ()
@@ -79,20 +92,35 @@ void Collidable::updateGrid(const float x, const float y)
     _position.y2 = this->getGrid().y2 + y;
 }
 
+void Collidable::setGridCorner(const float x, const float y)
+{
+    float width = this->getGrid().x2 - this->getGrid().x1;
+    float height =this->getGrid().y2 - this->getGrid().y1;
+    _position.x1 = x;
+    _position.y1 = y;
+    _position.x2 = this->getGrid().x1 + width;
+    _position.y2 = this->getGrid().y1 + height;
+}
+
 CollisionGrid Collidable::getGrid()
 {
     return _position;
 }
 
-int Collidable::getHeight()
+float Collidable::getHeight()
 {
     return _height;
 }
 
-int Collidable::getWidth()
+float Collidable::getWidth()
 {
     return _width;
 }
+
+void Collidable::setTeleportX(float xCor) { _teleportXCoor = xCor; }
+void Collidable::setTeleportY(float yCor) { _teleportYCoor = yCor; }
+float Collidable::getTeleportX() { return _teleportXCoor; }
+float Collidable::getTeleportY() { return _teleportYCoor; }
 
 // --------------------Character Functions---------------------------
 Character::Character (std::string filepath) : Collidable(0, 0, this->getLocalBounds().height,this->getLocalBounds().width)
@@ -267,14 +295,7 @@ bool Character::collideX(float moveVal)
             )
           )
         {
-            if (object->getCondition() == "Death")
-            {
-                this->setIfDead(true);
-            }
-            else if (object->getCondition() == "Goal")
-            {
-                this->setIfWin(true);
-            }
+            this->blockTrigger(object->getCondition());
             return true;
         }
     }
@@ -308,14 +329,7 @@ bool Character::collideY(float moveVal)
             )
           )
         {
-            if (object->getCondition() == "Death")
-            {
-                this->setIfDead(true);
-            }
-            else if (object->getCondition() == "Goal")
-            {
-                this->setIfWin(true);
-            }
+            this->blockTrigger(object->getCondition());
             return true;
         }
     }
@@ -351,6 +365,23 @@ bool Character::standing(float moveVal)
         }
     }
     return false;
+}
+
+void Character::blockTrigger(tuple<Collidable::Condition, float, float> condition)
+{
+    if (get<0>(condition) == Collidable::DEATH)
+    {
+        this->setIfDead(true);
+    }
+    else if (get<0>(condition) == Collidable::GOAL)
+    {
+        this->setIfWin(true);
+    }
+    else if (get<0>(condition) == Collidable::TELEPORT)
+    {
+        this->sf::Sprite::setPosition(get<1>(condition), get<2>(condition));
+        this->setGridCorner(get<1>(condition), get<2>(condition));
+    }
 }
 
 void Character::transpose(const int &x, const int &y) {
@@ -408,4 +439,13 @@ Block::Block (const int x, const int y, const int width, const int height, const
 Block::~Block()
 {
 
+}
+
+// --------------------TeleportBlock Functions---------------------------
+TeleportBlock::TeleportBlock (const int x, const int y, const int width, const int height, const float xCor, const float yCor)
+: Block(x, y, width, height)
+{
+    this->setTeleportX(xCor);
+    this->setTeleportY(yCor);
+    this->setCondition(Collidable::TELEPORT);
 }
