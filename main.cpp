@@ -128,6 +128,7 @@ void runGame (NetworkClient & serverConnection)
     sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
     Clock::clock.restart();
     sf::Clock refreshTime;
+    sf::Clock scaleTime;
     float windowHeight = 768;
     float windowWidth = 1366;
     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "hElP Me!");
@@ -208,6 +209,15 @@ void runGame (NetworkClient & serverConnection)
         {
             serverConnection.updateCharactersVector(charVec, otherCharacters);
             refreshTime.restart();
+        }
+        
+        if (scaleTime.getElapsedTime() > sf::milliseconds(5000))
+        {
+            for(int i = 0; i < charVec.size(); i++)
+            {
+                charVec[i].sf::Sprite::setScale(.25, .25);
+            }
+            scaleTime.restart();
         }
 
         window.clear();
